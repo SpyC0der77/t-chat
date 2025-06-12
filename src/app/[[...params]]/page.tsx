@@ -1,7 +1,10 @@
 "use client";
 
-import App from "@/frontend/app";
+import dynamic from "next/dynamic";
 
+const ClientApp = dynamic(() => import("@/frontend/app"), {
+  ssr: false,
+});
 export default function Root() {
-  return <App />;
+  return <ClientApp />;
 }
