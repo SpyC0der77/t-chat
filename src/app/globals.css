@@ -141,3 +141,45 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .button-reflect {
+    --min: #2e001f40 !important;
+    --max: #ffa6e2b0 !important;
+    --start: #000000d9 !important;
+  }
+
+  .border-reflect:before {
+    content: "";
+    pointer-events: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: var(--gradientBorder-size, 1px);
+    background: var(--gradientBorder-gradient);
+    -webkit-mask: linear-gradient(var(--start), #000) content-box, linear-gradient(var(--start), #000);
+    mask: linear-gradient(var(--start), #000) content-box, linear-gradient(var(--start), #000);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: var(--opacity, 1);
+  }
+
+  .border-reflect {
+    --c: 320 100% 75%;
+    --min: hsl(320 100% 75% /0.2): hsl(var(--c) / 0.2);
+    --max: hsl(var(--c) / 1);
+    --gradientBorder-gradient: linear-gradient(180deg, var(--min), var(--max), var(--min)), linear-gradient(15deg, var(--min) 50%, var(--max));
+    --opacity: 1;
+    --start: rgba(0, 0, 0, .85);
+    position: relative;
+  }
+
+  .dark .border-reflect {
+    --gradientBorder-gradient: linear-gradient(180deg, #93335b00, #93335bbd, #93335b17), linear-gradient(15deg, #93335b1f 50%, #93335bbd);
+    --start: rgba(0, 0, 0, .92);
+  }
+}

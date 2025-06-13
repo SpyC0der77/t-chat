@@ -1,4 +1,5 @@
 import BgGradient from "@/components/bg-gradient";
+import SignIn from "@/services/auth/components/sign-in";
 import Image from "next/image";
 
 export default function Auth() {
@@ -22,6 +23,7 @@ export default function Auth() {
       <div className="mb-8 text-center text-muted-foreground">
         <p>Sign in below (we'll increase your inner limits if you do 😉)</p>
       </div>
+      <SignIn />
       <div className="mt-6 text-center text-sm text-muted-foreground/60">
         <p>By continuing, you agree to our <a href="/terms-of-service" className="text-muted-foreground hover:text-white">Terms of Service</a> and <a href="/privacy-policy" className="text-muted-foreground hover:text-white">Privacy Policy</a></p>
       </div>
