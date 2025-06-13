@@ -1,3 +1,4 @@
+import BackButton from "@/components/back-button";
 import BgGradient from "@/components/bg-gradient";
 import SignIn from "@/services/auth/components/sign-in";
 import Image from "next/image";
@@ -6,6 +7,7 @@ export default function Auth() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-8">
       <BgGradient />
+      <BackButton />
       <h1 className="mb-5 h-5 text-xl font-bold text-foreground">
         Welcome to
         <Image
