@@ -3,7 +3,7 @@ import { convexAdapter } from "@better-auth-kit/convex";
 import { ConvexHttpClient } from "convex/browser";
 import { env } from "@/env";
 
-const convexClient = new ConvexHttpClient(env.CONVEX_URL);
+const convexClient = new ConvexHttpClient(env.NEXT_PUBLIC_CONVEX_URL);
 
 export const auth = betterAuth({
   database: convexAdapter(convexClient),

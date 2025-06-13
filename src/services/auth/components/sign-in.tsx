@@ -16,9 +16,11 @@ export default function SignIn() {
       },
       {
         onRequest: (ctx) => {
+          console.log("onRequest", ctx);
           setLoading(true);
         },
         onResponse: (ctx) => {
+          console.log("onResponse", ctx);
           setLoading(false);
         },
       },
