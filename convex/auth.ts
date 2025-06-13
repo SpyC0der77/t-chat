@@ -48,6 +48,8 @@ export const {
     onCreateUser: async (ctx, user) => {
       const userId = await ctx.db.insert("users", {
         email: user.email,
+        name: user.name,
+        picture: user.image
       });
       return userId;
     },

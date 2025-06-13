@@ -15,12 +15,10 @@ export default function SignIn() {
         callbackURL: "/"
       },
       {
-        onRequest: (ctx) => {
-          console.log("onRequest", ctx);
+        onRequest: () => {
           setLoading(true);
         },
-        onResponse: (ctx) => {
-          console.log("onResponse", ctx);
+        onResponse: () => {
           setLoading(false);
         },
       },
