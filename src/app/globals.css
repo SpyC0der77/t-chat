@@ -185,3 +185,7 @@
     --start: rgba(0, 0, 0, .92);
   }
 }
+
+@theme {
+  --ease-snappy: cubic-bezier(.2, .4, .1, .95);
+}

@@ -57,6 +57,9 @@ import {
   Trash,
 } from "lucide-react"
 import { useRef, useState } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { Icon } from "@/components/icon"
 
 // Initial conversation history
 const conversationHistory = [
@@ -172,28 +175,45 @@ const initialMessages = [
 
 function ChatSidebar() {
   return (
-    <Sidebar>
-      <SidebarHeader className="flex flex-row items-center justify-between gap-2 px-2 py-4">
-        <div className="flex flex-row items-center gap-2 px-2">
-          <div className="bg-primary/10 size-8 rounded-md"></div>
-          <div className="text-md font-base text-primary tracking-tight">
-            zola.chat
-          </div>
-        </div>
-        <Button variant="ghost" className="size-8">
-          <Search className="size-4" />
-        </Button>
-      </SidebarHeader>
-      <SidebarContent className="pt-4">
-        <div className="px-4">
-          <Button
-            variant="outline"
-            className="mb-4 flex w-full items-center gap-2"
-          >
-            <PlusIcon className="size-4" />
-            <span>New Chat</span>
+    <Sidebar className="z-50 border-none p-2">
+      <SidebarHeader className="flex flex-col gap-2 relative m-1 mb-0 space-y-1 p-0">
+        <h1 className="flex h-8 shrink-0 items-center justify-center text-lg text-muted-foreground transition-opacity delay-75 duration-75">
+          <Link className="relative flex h-8 w-24 items-center justify-center text-sm font-semibold text-foreground" href="/" data-discover="true">
+            <div className="h-3.5 select-none">
+              <Image
+                alt="T4 Chat logo"
+                loading="lazy"
+                width="96"
+                height="20"
+                decoding="async"
+                data-nimg="1"
+                className="w-full h-full"
+                src="/images/t4logo.svg"
+                style={{ color: "transparent" }}
+              />
+            </div>
+          </Link>
+        </h1>
+        <div className="px-1">
+          <Button asChild className="w-full select-none bg-primary/20 font-semibold border-reflect button-reflect focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:bg-[#d56698] active:bg-[rgb(162,59,103)] disabled:hover:bg-[rgb(162,59,103)] disabled:active:bg-[rgb(162,59,103)] dark:bg-primary/20 dark:hover:bg-pink-800/70 dark:active:bg-pink-800/40 disabled:dark:hover:bg-primary/20 disabled:dark:active:bg-primary/20">
+            <Link href="/" >
+              <span className="w-full select-none text-center">New Chat</span>
+            </Link>
           </Button>
         </div>
+        <div className="border-b border-chat-border px-3">
+          <div className="flex items-center">
+            <Icon name="search" className="-ml-[3px] mr-3 !size-4 text-muted-foreground" />
+            <input
+              role="searchbox"
+              aria-label="Search threads"
+              placeholder="Search your threads..."
+              className="w-full bg-transparent py-2 text-sm text-foreground placeholder-muted-foreground/50 placeholder:select-none focus:outline-none"
+            />
+          </div>
+        </div>
+      </SidebarHeader>
+      <SidebarContent className="pt-4">
         {conversationHistory.map((group) => (
           <SidebarGroup key={group.period}>
             <SidebarGroupLabel>{group.period}</SidebarGroupLabel>
