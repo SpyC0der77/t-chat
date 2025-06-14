@@ -10,7 +10,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "T3 Chat - The Best AI Assistant & ChatGPT Alternative | $0/month",
+  title: "T4 Chat - The Best AI Assistant & ChatGPT Alternative | $0/month",
   description: "Get access to premium AI models including GPT-4, Claude, DeepSeek, Gemini and more for free. Nearly unlimited tier is only $0/month! Experience the best AI models in the best AI chat app.",
 };
 

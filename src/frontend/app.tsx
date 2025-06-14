@@ -2,6 +2,7 @@ import { Route, BrowserRouter, Routes, Navigate } from 'react-router';
 import Auth from './auth';
 import { useConvexAuth } from 'convex/react';
 import ProtectedRoute from '@/components/protected';
+import Home from './home';
 
 export default function App() {
   const { isLoading, isAuthenticated } = useConvexAuth();
@@ -11,7 +12,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<h1>Landing Page - Hello World</h1>} />
+        <Route path="/" element={<Home />} />
         <Route path="/auth" element={
           isAuthenticated ? <Navigate to="/settings/subscription" replace /> : <Auth />
         } />

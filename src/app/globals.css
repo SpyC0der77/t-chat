@@ -86,6 +86,7 @@
   --chat-input-background: hsla(270, 0%, 100%, var(--blur-fallback, 0.1));
   --chat-overlay: hsla(309, 63%, 92%, var(--blur-fallback, 0.72));
   --wordmark-color: #ca0277;
+  --sidebar: hsl(0 0% 98%);
 }
 
 .dark {
@@ -130,6 +131,7 @@
   --chat-input-background: hsla(270, 10%, 20%, var(--blur-fallback, 0.4));
   --chat-overlay: hsla(270, 12%, 16%, var(--blur-fallback, 0.71));
   --wordmark-color: #e3bad1;
+  --sidebar: hsl(240 5.9% 10%);
 }
 
 @layer base {
