@@ -1,13 +1,3 @@
-//import BgGradient from "@/components/bg-gradient";
-//
-//export default function Home() {
-//  return (
-//    <div className="flex min-h-screen flex-col items-center justify-center p-8">
-//      <BgGradient />
-//    </div>
-//  );
-//}
-
 "use client"
 
 import {
@@ -32,14 +22,16 @@ import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
+  SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
-  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarProvider,
   SidebarRail,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import {
@@ -50,8 +42,6 @@ import {
   MoreHorizontal,
   Pencil,
   Plus,
-  PlusIcon,
-  Search,
   ThumbsDown,
   ThumbsUp,
   Trash,
@@ -60,6 +50,10 @@ import { useRef, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Icon } from "@/components/icon"
+import BgGradient from "@/components/bg-gradient"
+import SidebarNav from "@/components/sidebar-navigation"
+import { CollapsibleContent } from "@radix-ui/react-collapsible"
+import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible"
 
 // Initial conversation history
 const conversationHistory = [
@@ -68,7 +62,7 @@ const conversationHistory = [
     conversations: [
       {
         id: "t1",
-        title: "Project roadmap discussion",
+        title: "Project roadmap discussion and you and me abnd you",
         lastMessage:
           "Let's prioritize the authentication features for the next sprint.",
         timestamp: new Date().setHours(new Date().getHours() - 2),
@@ -106,6 +100,48 @@ const conversationHistory = [
           "The lazy loading implementation reduced initial load time by 40%.",
         timestamp: new Date().setDate(new Date().getDate() - 1),
       },
+      {
+        id: "y3",
+        title: "Performance Optimization",
+        lastMessage:
+          "The lazy loading implementation reduced initial load time by 40%.",
+        timestamp: new Date().setDate(new Date().getDate() - 1),
+      },
+      {
+        id: "y4",
+        title: "Performance Optimization",
+        lastMessage:
+          "The lazy loading implementation reduced initial load time by 40%.",
+        timestamp: new Date().setDate(new Date().getDate() - 1),
+      },
+      {
+        id: "y5",
+        title: "Performance Optimization",
+        lastMessage:
+          "The lazy loading implementation reduced initial load time by 40%.",
+        timestamp: new Date().setDate(new Date().getDate() - 2),
+      },
+      {
+        id: "y6",
+        title: "Performance Optimization",
+        lastMessage:
+          "The lazy loading implementation reduced initial load time by 40%.",
+        timestamp: new Date().setDate(new Date().getDate() - 3),
+      },
+      {
+        id: "y7",
+        title: "Performance Optimization",
+        lastMessage:
+          "The lazy loading implementation reduced initial load time by 40%.",
+        timestamp: new Date().setDate(new Date().getDate() - 4),
+      },
+      {
+        id: "y8",
+        title: "Performance Optimization",
+        lastMessage:
+          "The lazy loading implementation reduced initial load time by 40%.",
+        timestamp: new Date().setDate(new Date().getDate() - 5),
+      },
     ],
   },
   {
@@ -131,6 +167,62 @@ const conversationHistory = [
           "The navigation redesign received positive feedback from the test group.",
         timestamp: new Date().setDate(new Date().getDate() - 6),
       },
+      {
+        id: "w4",
+        title: "UI/UX Feedback",
+        lastMessage:
+          "The navigation redesign received positive feedback from the test group.",
+        timestamp: new Date().setDate(new Date().getDate() - 7),
+      },
+      {
+        id: "w5",
+        title: "UI/UX Feedback",
+        lastMessage:
+          "The navigation redesign received positive feedback from the test group.",
+        timestamp: new Date().setDate(new Date().getDate() - 8),
+      },
+      {
+        id: "w6",
+        title: "UI/UX Feedback",
+        lastMessage:
+          "The navigation redesign received positive feedback from the test group.",
+        timestamp: new Date().setDate(new Date().getDate() - 9),
+      },
+      {
+        id: "w7",
+        title: "UI/UX Feedback",
+        lastMessage:
+          "The navigation redesign received positive feedback from the test group.",
+        timestamp: new Date().setDate(new Date().getDate() - 10),
+      },
+      {
+        id: "w8",
+        title: "UI/UX Feedback",
+        lastMessage:
+          "The navigation redesign received positive feedback from the test group.",
+        timestamp: new Date().setDate(new Date().getDate() - 11),
+      },
+      {
+        id: "w9",
+        title: "UI/UX Feedback",
+        lastMessage:
+          "The navigation redesign received positive feedback from the test group.",
+        timestamp: new Date().setDate(new Date().getDate() - 12),
+      },
+      {
+        id: "w10",
+        title: "UI/UX Feedback",
+        lastMessage:
+          "The navigation redesign received positive feedback from the test group.",
+        timestamp: new Date().setDate(new Date().getDate() - 13),
+      },
+      {
+        id: "w11",
+        title: "UI/UX Feedback",
+        lastMessage:
+          "The navigation redesign received positive feedback from the test group.",
+        timestamp: new Date().setDate(new Date().getDate() - 14),
+      },
     ],
   },
   {
@@ -143,6 +235,69 @@ const conversationHistory = [
           "All the development environments are now configured consistently.",
         timestamp: new Date().setDate(new Date().getDate() - 15),
       },
+      {
+        id: "m2",
+        title: "Initial Project Setup",
+        lastMessage:
+          "All the development environments are now configured consistently.",
+        timestamp: new Date().setDate(new Date().getDate() - 16),
+      },
+      {
+        id: "m3",
+        title: "Initial Project Setup",
+        lastMessage:
+          "All the development environments are now configured consistently.",
+        timestamp: new Date().setDate(new Date().getDate() - 17),
+      },
+      {
+        id: "m4",
+        title: "Initial Project Setup",
+        lastMessage:
+          "All the development environments are now configured consistently.",
+        timestamp: new Date().setDate(new Date().getDate() - 18),
+      },
+      {
+        id: "m5",
+        title: "Initial Project Setup",
+        lastMessage:
+          "All the development environments are now configured consistently.",
+        timestamp: new Date().setDate(new Date().getDate() - 19),
+      },
+      {
+        id: "m6",
+        title: "Initial Project Setup",
+        lastMessage:
+          "All the development environments are now configured consistently.",
+        timestamp: new Date().setDate(new Date().getDate() - 20),
+      },
+      {
+        id: "m7",
+        title: "Initial Project Setup",
+        lastMessage:
+          "All the development environments are now configured consistently.",
+        timestamp: new Date().setDate(new Date().getDate() - 21),
+      },
+      {
+        id: "m8",
+        title: "Initial Project Setup",
+        lastMessage:
+          "All the development environments are now configured consistently.",
+        timestamp: new Date().setDate(new Date().getDate() - 22),
+      },
+      {
+        id: "m9",
+        title: "Initial Project Setup",
+        lastMessage:
+          "All the development environments are now configured consistently.",
+        timestamp: new Date().setDate(new Date().getDate() - 23),
+      },
+      {
+        id: "m10",
+        title: "Initial Project Setup",
+        lastMessage:
+          "All the development environments are now configured consistently.",
+        timestamp: new Date().setDate(new Date().getDate() - 24),
+      }
     ],
   },
 ]
@@ -213,19 +368,90 @@ function ChatSidebar() {
           </div>
         </div>
       </SidebarHeader>
-      <SidebarContent className="pt-4">
-        {conversationHistory.map((group) => (
-          <SidebarGroup key={group.period}>
-            <SidebarGroupLabel>{group.period}</SidebarGroupLabel>
-            <SidebarMenu>
-              {group.conversations.map((conversation) => (
-                <SidebarMenuButton key={conversation.id}>
-                  <span>{conversation.title}</span>
-                </SidebarMenuButton>
-              ))}
-            </SidebarMenu>
-          </SidebarGroup>
-        ))}
+      <SidebarContent className="small-scrollbar scroll-shadow relative pb-2">
+        <div style={{
+          overflowAnchor: 'none',
+          flex: '0 0 auto',
+          position: 'relative',
+          visibility: 'hidden',
+          width: '100%',
+          height: '1328px'
+        }}>
+          <div style={{
+            position: 'absolute',
+            top: '0px',
+            left: '0px',
+            width: '100%',
+            visibility: 'visible',
+          }}>
+            {conversationHistory.map((group) => (
+              <Collapsible
+                key={group.period}
+                title={group.period}
+                defaultOpen
+                className="group/collapsible"
+              >
+                <SidebarGroup key={group.period}>
+                  <SidebarGroupLabel className="select-none px-1.5 text-heading" asChild>
+                    <CollapsibleTrigger>
+                      <span>{group.period}</span>
+                      <Icon name="collapse" className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                    </CollapsibleTrigger>
+                  </SidebarGroupLabel>
+                  <CollapsibleContent>
+                    <SidebarGroupContent>
+                      <SidebarMenu className="text-sm">
+                        {group.conversations.map((conversation) => (
+                          <span className="select-none" key={conversation.id}>
+                            <SidebarMenuItem>
+                              <Link
+                                className="group/link relative flex h-9 w-full items-center overflow-hidden rounded-lg px-2 py-1 text-sm outline-none hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring hover:focus-visible:bg-sidebar-accent"
+                                href={`/chat/${conversation.id}`}
+                              >
+                                <div className="relative flex w-full items-center">
+                                  <input
+                                    aria-label="Thread title"
+                                    aria-describedby="thread-title-hint"
+                                    aria-readonly="true"
+                                    tabIndex={-1}
+                                    className="hover:truncate-none h-full w-full overflow-hidden rounded bg-transparent px-1 py-1 text-sm text-muted-foreground outline-none pointer-events-none cursor-pointer truncate"
+                                    title={conversation.title}
+                                    type="text"
+                                    readOnly={true}
+                                    value={conversation.title}
+                                  />
+                                  <div className="pointer-events-auto absolute -right-1 bottom-0 top-0 z-50 flex translate-x-full items-center justify-end text-muted-foreground transition-transform group-hover/link:translate-x-0 group-hover/link:bg-sidebar-accent">
+                                    <div className="pointer-events-none absolute bottom-0 right-[100%] top-0 h-12 w-8 bg-gradient-to-l from-sidebar-accent to-transparent opacity-0 group-hover/link:opacity-100" />
+                                    <button
+                                      className="rounded-md p-1.5 hover:bg-muted/40"
+                                      tabIndex={-1}
+                                      data-action="pin-thread"
+                                      aria-label="pin thread"
+                                      data-state="closed">
+                                      <Icon name="pin" className="size-4" />
+                                    </button>
+                                    <button
+                                      className="rounded-md p-1.5 hover:bg-destructive/50 hover:text-destructive-foreground"
+                                      tabIndex={-1}
+                                      data-action="pin-thread"
+                                      aria-label="pin thread"
+                                      data-state="closed">
+                                      <Icon name="delete" className="size-4" />
+                                    </button>
+                                  </div>
+                                </div>
+                              </Link>
+                            </SidebarMenuItem>
+                          </span>
+                        ))}
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </CollapsibleContent>
+                </SidebarGroup>
+              </Collapsible>
+            ))}
+          </div>
+        </div>
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
@@ -237,6 +463,7 @@ function ChatContent() {
   const [isLoading, setIsLoading] = useState(false)
   const [chatMessages, setChatMessages] = useState(initialMessages)
   const chatContainerRef = useRef<HTMLDivElement>(null)
+  const { open } = useSidebar()
 
   const handleSubmit = () => {
     if (!prompt.trim()) return
@@ -267,12 +494,27 @@ function ChatContent() {
   }
 
   return (
-    <main className="flex h-screen flex-col overflow-hidden">
-      <header className="bg-background z-10 flex h-16 w-full shrink-0 items-center gap-2 border-b px-4">
-        <SidebarTrigger className="-ml-1" />
-        <div className="text-foreground">Project roadmap discussion</div>
-      </header>
-
+    <main className="flex min-h-svh flex-col overflow-hidden w-full relative transistion-[width,height]">
+      <div
+        className={cn(
+          "absolute bottom-0 top-0 w-full overflow-hidden border-l border-t border-chat-border bg-chat-background bg-fixed pb-[140px] transition-all ease-snappy max-sm:border-none sm:translate-y-3.5 sm:rounded-tl-xl",
+          !open && "!translate-y-0 !rounded-none border-none"
+        )}>
+        <div className={cn(
+          "bg-noise absolute inset-0 -top-3.5 bg-fixed transition-transform ease-snappy [background-position:right_bottom]",
+          !open && "translate-y-3.5"
+        )} />
+      </div>
+      <div
+        className={cn(
+          "absolute inset-x-3 top-0 z-10 box-content overflow-hidden border-b border-chat-border bg-gradient-noise-top/80 backdrop-blur-md transition-[transform,border] ease-snappy blur-fallback:bg-gradient-noise-top max-sm:hidden sm:h-3.5",
+          !open && "-translate-y-[15px] border-transparent"
+        )}
+      >
+        <div className="absolute left-0 top-0 h-full w-8 bg-gradient-to-r from-gradient-noise-top to-transparent blur-fallback:hidden" />
+        <div className="absolute right-24 top-0 h-full w-8 bg-gradient-to-l from-gradient-noise-top to-transparent blur-fallback:hidden" />
+        <div className="absolute right-0 top-0 h-full w-24 bg-gradient-noise-top blur-fallback:hidden" />
+      </div>
       <div ref={chatContainerRef} className="relative flex-1 overflow-y-auto">
         <ChatContainerRoot className="h-full">
           <ChatContainerContent className="space-y-0 px-5 py-12">
@@ -461,10 +703,10 @@ function ChatContent() {
 export default function FullChatApp() {
   return (
     <SidebarProvider>
+      <BgGradient />
       <ChatSidebar />
-      <SidebarInset>
-        <ChatContent />
-      </SidebarInset>
+      <SidebarNav />
+      <ChatContent />
     </SidebarProvider>
   )
 }

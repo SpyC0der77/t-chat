@@ -37,6 +37,14 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-heading: var(--heading);
+  --color-chat-border: var(--chat-border);
+  --color-chat-background: var(--chat-background);
+  --color-chat-accent: var(--chat-accent);
+  --color-chat-input-gradient: var(--chat-input-gradient);
+  --color-chat-input-background: var(--chat-input-background);
+  --color-chat-overlay: var(--chat-overlay);
+  --color-wordmark-color: var(--wordmark-color);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -78,7 +86,7 @@
   --sidebar-border: hsl(0, 0%, 0%);
   --sidebar-ring: hsl(333.3, 71.4%, 50.6%);
   --gradient-noise-top: hsl(292, 42.9%, 93.1%);
-  --color-heading: hsl(336.3, 70.3%, 19.8%);
+  --heading: hsl(336.3, 70.3%, 19.8%);
   --chat-border: hsl(304.8, 61%, 83.9%);
   --chat-background: hsl(300, 56%, 98%);
   --chat-accent: #f5ecf9;
@@ -123,7 +131,7 @@
   --sidebar-border: hsl(0, 0%, 0%);
   --sidebar-ring: hsl(333.3, 71.4%, 50.6%);
   --gradient-noise-top: hsl(309, 15%, 9%);
-  --color-heading: hsl(328.2, 45.9%, 57.3%);
+  --heading: hsl(328.2, 45.9%, 57.3%);
   --chat-border: hsl(333.3, 22%, 16.1%);
   --chat-background: hsl(270, 16.13%, 12.16%);
   --chat-accent: rgba(25, 21, 30, .86);
@@ -183,6 +191,40 @@
   .dark .border-reflect {
     --gradientBorder-gradient: linear-gradient(180deg, #93335b00, #93335bbd, #93335b17), linear-gradient(15deg, #93335b1f 50%, #93335bbd);
     --start: rgba(0, 0, 0, .92);
+  }
+
+  .small-scrollbar::-webkit-scrollbar {
+    width: 4px !important;
+    height: 4px !important
+  }
+
+  .small-scrollbar[data-scrolling=true]::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground)/.4)
+  }
+
+  .dark .small-scrollbar[data-scrolling=true]::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground)/.2)
+  }
+
+  .small-scrollbar::-webkit-scrollbar-thumb {
+    transition: background .2s ease-in-out;
+    background: transparent;
+    border-radius: 4px;
+    border: 1.5px solid transparent;
+    background-clip: content-box;
+    -webkit-background-clip: content-box
+  }
+
+  .small-scrollbar::-webkit-scrollbar-thumb:hover {
+    border: 1px solid transparent;
+    background: hsl(var(--muted-foreground)/.5)
+  }
+
+  .scroll-shadow:not([data-shadow=false]) {
+    --shadow-height: 20px;
+    --scrollbar-width: 8px;
+    mask-image: linear-gradient(to bottom, transparent, #000 var(--shadow-height), #000 calc(100% - var(--shadow-height)), transparent 100%), linear-gradient(to left, #fff var(--scrollbar-width), transparent var(--scrollbar-width));
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 var(--shadow-height), #000 calc(100% - var(--shadow-height)), transparent 100%), linear-gradient(to left, #fff var(--scrollbar-width), transparent var(--scrollbar-width));
   }
 }
 
