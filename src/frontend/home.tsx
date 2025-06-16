@@ -1,22 +1,3 @@
-"use client"
-
-import {
-  ChatContainerContent,
-  ChatContainerRoot,
-} from "@/components/ui/chat-container"
-import {
-  Message,
-  MessageAction,
-  MessageActions,
-  MessageContent,
-} from "@/components/ui/message"
-import {
-  PromptInput,
-  PromptInputAction,
-  PromptInputActions,
-  PromptInputTextarea,
-} from "@/components/ui/prompt-input"
-import { ScrollButton } from "@/components/ui/scroll-button"
 import { Button } from "@/components/ui/button"
 import {
   Sidebar,
@@ -32,18 +13,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
-import {
-  ArrowUp,
-  Copy,
-  Globe,
-  Mic,
-  MoreHorizontal,
-  Pencil,
-  Plus,
-  ThumbsDown,
-  ThumbsUp,
-  Trash,
-} from "lucide-react"
 import { useRef, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
@@ -52,6 +21,7 @@ import BgGradient from "@/components/bg-gradient"
 import SidebarNav from "@/components/sidebar-navigation"
 import { CollapsibleContent } from "@radix-ui/react-collapsible"
 import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { SettingNav, SettingNavSvg } from "@/components/setting-navigation"
 
 // Initial conversation history
 const conversationHistory = [
@@ -513,185 +483,81 @@ function ChatContent() {
         <div className="absolute right-24 top-0 h-full w-8 bg-gradient-to-l from-gradient-noise-top to-transparent blur-fallback:hidden" />
         <div className="absolute right-0 top-0 h-full w-24 bg-gradient-noise-top blur-fallback:hidden" />
       </div>
-      <div ref={chatContainerRef} className="relative flex-1 overflow-y-auto">
-        <ChatContainerRoot className="h-full">
-          <ChatContainerContent className="space-y-0 px-5 py-12">
-            {chatMessages.map((message, index) => {
-              const isAssistant = message.role === "assistant"
-              const isLastMessage = index === chatMessages.length - 1
-
-              return (
-                <Message
-                  key={message.id}
-                  className={cn(
-                    "mx-auto flex w-full max-w-3xl flex-col gap-2 px-6",
-                    isAssistant ? "items-start" : "items-end"
-                  )}
+      <div className="absolute bottom-0 top-0 w-full">
+        <SettingNavSvg />
+        <div className="pointer-events-none absolute bottom-0 z-10 w-full px-2">
+          <div className="relative mx-auto flex w-full max-w-3xl flex-col text-center">
+            <div className="pointer-events-none">
+              <div className="pointer-events-auto">
+                <div
+                  className="border-reflect rounded-t-[20px] bg-[--chat-input-background] p-2 pb-0 backdrop-blur-lg ![--c:--chat-input-gradient]"
+                  style={{ "--gradientBorder-gradient": "linear-gradient(180deg, var(--min), var(--max), var(--min)), linear-gradient(15deg, var(--min) 50%, var(--max)); --start: #000000e0; --opacity: 1" } as React.CSSProperties}
                 >
-                  {isAssistant ? (
-                    <div className="group flex w-full flex-col gap-0">
-                      <MessageContent
-                        className="text-foreground prose flex-1 rounded-lg bg-transparent p-0"
-                        markdown
-                      >
-                        {message.content}
-                      </MessageContent>
-                      <MessageActions
-                        className={cn(
-                          "-ml-2.5 flex gap-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100",
-                          isLastMessage && "opacity-100"
-                        )}
-                      >
-                        <MessageAction tooltip="Copy" delayDuration={100}>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="rounded-full"
-                          >
-                            <Copy />
-                          </Button>
-                        </MessageAction>
-                        <MessageAction tooltip="Upvote" delayDuration={100}>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="rounded-full"
-                          >
-                            <ThumbsUp />
-                          </Button>
-                        </MessageAction>
-                        <MessageAction tooltip="Downvote" delayDuration={100}>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="rounded-full"
-                          >
-                            <ThumbsDown />
-                          </Button>
-                        </MessageAction>
-                      </MessageActions>
-                    </div>
-                  ) : (
-                    <div className="group flex flex-col items-end gap-1">
-                      <MessageContent className="bg-muted text-primary max-w-[85%] rounded-3xl px-5 py-2.5 sm:max-w-[75%]">
-                        {message.content}
-                      </MessageContent>
-                      <MessageActions
-                        className={cn(
-                          "flex gap-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
-                        )}
-                      >
-                        <MessageAction tooltip="Edit" delayDuration={100}>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="rounded-full"
-                          >
-                            <Pencil />
-                          </Button>
-                        </MessageAction>
-                        <MessageAction tooltip="Delete" delayDuration={100}>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="rounded-full"
-                          >
-                            <Trash />
-                          </Button>
-                        </MessageAction>
-                        <MessageAction tooltip="Copy" delayDuration={100}>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="rounded-full"
-                          >
-                            <Copy />
-                          </Button>
-                        </MessageAction>
-                      </MessageActions>
-                    </div>
-                  )}
-                </Message>
-              )
-            })}
-          </ChatContainerContent>
-          <div className="absolute bottom-4 left-1/2 flex w-full max-w-3xl -translate-x-1/2 justify-end px-5">
-            <ScrollButton className="shadow-sm" />
-          </div>
-        </ChatContainerRoot>
-      </div>
-
-      <div className="bg-background z-10 shrink-0 px-3 pb-3 md:px-5 md:pb-5">
-        <div className="mx-auto max-w-3xl">
-          <PromptInput
-            isLoading={isLoading}
-            value={prompt}
-            onValueChange={setPrompt}
-            onSubmit={handleSubmit}
-            className="border-input bg-popover relative z-10 w-full rounded-3xl border p-0 pt-1 shadow-xs"
-          >
-            <div className="flex flex-col">
-              <PromptInputTextarea
-                placeholder="Ask anything"
-                className="min-h-[44px] pt-3 pl-4 text-base leading-[1.3] sm:text-base md:text-base"
-              />
-
-              <PromptInputActions className="mt-5 flex w-full items-center justify-between gap-2 px-3 pb-3">
-                <div className="flex items-center gap-2">
-                  <PromptInputAction tooltip="Add a new action">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="size-9 rounded-full"
-                    >
-                      <Plus size={18} />
-                    </Button>
-                  </PromptInputAction>
-
-                  <PromptInputAction tooltip="Search">
-                    <Button variant="outline" className="rounded-full">
-                      <Globe size={18} />
-                      Search
-                    </Button>
-                  </PromptInputAction>
-
-                  <PromptInputAction tooltip="More actions">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="size-9 rounded-full"
-                    >
-                      <MoreHorizontal size={18} />
-                    </Button>
-                  </PromptInputAction>
-                </div>
-                <div className="flex items-center gap-2">
-                  <PromptInputAction tooltip="Voice input">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="size-9 rounded-full"
-                    >
-                      <Mic size={18} />
-                    </Button>
-                  </PromptInputAction>
-
-                  <Button
-                    size="icon"
-                    disabled={!prompt.trim() || isLoading}
-                    onClick={handleSubmit}
-                    className="size-9 rounded-full"
+                  <form
+                    className="relative flex w-full flex-col items-stretch gap-2 rounded-t-xl border border-b-0 border-white/70 bg-[--chat-input-background] px-3 pt-3 text-secondary-foreground outline-8 outline-[hsl(var(--chat-input-gradient)/0.5)] pb-3 max-sm:pb-6 sm:max-w-3xl dark:border-[hsl(0,0%,83%)]/[0.04] dark:bg-secondary/[0.045] dark:outline-chat-background/40"
+                    style={{ boxShadow: "rgba(0, 0, 0, 0.1) 0px 80px 50px 0px, rgba(0, 0, 0, 0.07) 0px 50px 30px 0px, rgba(0, 0, 0, 0.06) 0px 30px 15px 0px, rgba(0, 0, 0, 0.04) 0px 15px 8px, rgba(0, 0, 0, 0.04) 0px 6px 4px, rgba(0, 0, 0, 0.02) 0px 2px 2px" }}
+                    onSubmit={(e) => e.preventDefault()}
                   >
-                    {!isLoading ? (
-                      <ArrowUp size={18} />
-                    ) : (
-                      <span className="size-3 rounded-xs bg-white" />
-                    )}
-                  </Button>
+                    <div className="flex flex-grow flex-col">
+                      <div className="flex flex-grow flex-row  items-start">
+                        <textarea
+                          name="input"
+                          id="chat-input"
+                          placeholder="Type your message here nerd..."
+                          aria-label="Message input"
+                          aria-describedby="chat-input-description"
+                          autoComplete="off"
+                          className="w-full resize-none bg-transparent text-base leading-6 text-foreground outline-none placeholder:text-secondary-foreground/60 disabled:opacity-0"
+                          style={{ height: "48px !important" }}
+                        />
+                        <div id="chat-input-description" className="sr-only">
+                          Press Enter to send, Shift+Enter to new line
+                        </div>
+                      </div>
+                      <div className="-mb-px mt-2 flex w-full flex-row-reverse justify-between">
+                        <div className="-mr-0.5 -mt-0.5 flex items-center justify-center gap-2" aria-label="Message actions">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="border-reflect button-reflect bg-[rgb(162,59,103)] font-semibold shadow hover:bg-[#d56698] active:bg-[rgb(162,59,103)] disabled:hover:bg-[rgb(162,59,103)] disabled:active:bg-[rgb(162,59,103)] dark:bg-primary/20 dark:hover:bg-pink-800/70 dark:active:bg-pink-800/40 disabled:dark:hover:bg-primary/20 disabled:dark:active:bg-primary/20 h-9 w-9 relative rounded-lg p-2 text-pink-50"
+                          >
+                            <Icon name="send" className="!size-5" />
+                          </Button>
+                        </div>
+                        <div className="flex flex-col gap-2 pr-2 sm:flex-row sm:items-center">
+                          <div className="ml-[-7px] flex items-center gap-1">
+                            <Button
+                              variant="ghost"
+                              className="h-8 text-xs gap-2 px-2 py-1.5 -mb-2 text-muted-foreground"
+                            >
+                              Gemini 2.5 Flash
+                              <Icon name="models" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              className="text-xs -mb-1.5 h-auto gap-2 rounded-full border border-solid border-secondary-foreground/10 py-1.5 pl-2 pr-2.5 text-muted-foreground max-sm:p-2"
+                            >
+                              <Icon name="web" />
+                              Search
+                            </Button>
+                            <Button
+                              variant={"outline"}
+                              className="text-xs -mb-1.5 h-auto gap-2 rounded-full border border-solid border-secondary-foreground/10 py-1.5 pl-2 pr-2.5 text-muted-foreground max-sm:p-2"
+                            >
+                              <Icon name="media" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
                 </div>
-              </PromptInputActions>
+              </div>
             </div>
-          </PromptInput>
+          </div>
+        </div>
+        <div className="absolute inset-0 overflow-y-scroll sm:pt-3.5 pb-[144px]" style={{ scrollbarGutter: "stable both-edges" }}>
+          <SettingNav />
         </div>
       </div>
     </main>

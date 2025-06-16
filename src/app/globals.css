@@ -45,6 +45,7 @@
   --color-chat-input-background: var(--chat-input-background);
   --color-chat-overlay: var(--chat-overlay);
   --color-wordmark-color: var(--wordmark-color);
+  --color-gradient-noise-top: var(--gradient-noise-top);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
