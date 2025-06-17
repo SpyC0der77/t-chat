@@ -3,9 +3,12 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Icon } from "@/components/icon"
 import { SettingNav, SettingNavSvg } from "@/components/setting-navigation"
+import { useConvex, useConvexAuth } from "convex/react"
+import { api } from "../../convex/_generated/api"
+import { AUTH_COOKIE_NAME } from "@/hooks/use-custom-auth"
 
 const initialMessages = [
   {
@@ -97,8 +100,12 @@ function ChatContent() {
             <div className="pointer-events-none">
               <div className="pointer-events-auto">
                 <div
-                  className="border-reflect rounded-t-[20px] bg-[--chat-input-background] p-2 pb-0 backdrop-blur-lg ![--c:--chat-input-gradient]"
-                  style={{ "--gradientBorder-gradient": "linear-gradient(180deg, var(--min), var(--max), var(--min)), linear-gradient(15deg, var(--min) 50%, var(--max)); --start: #000000e0; --opacity: 1" } as React.CSSProperties}
+                  className="border-reflect rounded-t-[20px] bg-(--chat-input-background) p-2 pb-0 backdrop-blur-lg ![--c:--chat-input-gradient]"
+                  style={{
+                    "--gradientBorder-gradient": "linear-gradient(180deg, var(--min), var(--max), var(--min)), linear-gradient(15deg, var(--min) 50%, var(--max))",
+                    "--start": "#000000e0",
+                    "--opacity": 1
+                  } as React.CSSProperties}
                 >
                   <form
                     className="relative flex w-full flex-col items-stretch gap-2 rounded-t-xl border border-b-0 border-white/70 bg-[--chat-input-background] px-3 pt-3 text-secondary-foreground outline-8 outline-[hsl(var(--chat-input-gradient)/0.5)] pb-3 max-sm:pb-6 sm:max-w-3xl dark:border-[hsl(0,0%,83%)]/[0.04] dark:bg-secondary/[0.045] dark:outline-chat-background/40"
@@ -173,6 +180,29 @@ function ChatContent() {
 }
 
 export default function FullChatApp() {
+  const { isAuthenticated } = useConvexAuth();
+  const convex = useConvex();
+
+  useEffect(() => {
+    async function getUser() {
+      const user = (await convex.query(api.auth.getCurrentUser))!;
+      console.log("user", user);
+      const cookieObject = JSON.stringify({
+        id: user.userId,
+        name: user.name,
+        picture: user.picture,
+        email: user.email,
+      });
+      const maxAge = 60 * 60 * 24 * 7;
+      document.cookie = `${AUTH_COOKIE_NAME}=${cookieObject}; Max-Age=${maxAge}; Path=/; SameSite=Lax`;
+    }
+
+    if (isAuthenticated) {
+      console.log("isAuthenticated", isAuthenticated)
+      getUser();
+    }
+  }, [isAuthenticated])
+
   return (
     <ChatContent />
   )

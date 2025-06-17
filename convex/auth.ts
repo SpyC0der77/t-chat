@@ -5,10 +5,11 @@ import {
   type PublicAuthFunctions,
 } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
-import { betterAuth } from "better-auth";
+import { betterAuth, BetterAuthPlugin } from "better-auth";
 import { api, components, internal } from "./_generated/api";
 import { query, type GenericCtx } from "./_generated/server";
 import type { Id, DataModel } from "./_generated/dataModel";
+import { createAuthMiddleware } from "better-auth/api";
 
 const authFunctions: AuthFunctions = internal.auth;
 const publicAuthFunctions: PublicAuthFunctions = api.auth;
@@ -25,6 +26,9 @@ export const createAuth = (ctx: GenericCtx) =>
   betterAuth({
     baseURL: process.env.NEXT_PUBLIC_APP_URL,
     database: convexAdapter(ctx, betterAuthComponent),
+    advanced: {
+
+    },
     socialProviders: {
       google: {
         clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -34,6 +38,12 @@ export const createAuth = (ctx: GenericCtx) =>
     plugins: [
       convex(),
     ],
+    hooks: {
+      after: createAuthMiddleware(async (ctx) => {
+        console.log("after", ctx.setSignedCookie('test', 'test', 'test', { httpOnly: false, sameSite: 'lax', secure: true }))
+        await new Promise(resolve => setTimeout(resolve, 10000));
+      })
+    }
   });
 
 // These are required named exports
