@@ -2,6 +2,8 @@
 
 #TODO
 
+//TODO: make Link Tag import from react-router instead of next/link
+
 [x] /auth page
 [ ] add buttons
 [ ] /settings/subscription page

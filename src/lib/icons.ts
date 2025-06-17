@@ -11,7 +11,8 @@ import {
   ArrowUp,
   ChevronDown,
   Globe,
-  Paperclip
+  Paperclip,
+  LogIn
 } from "lucide-react";
 
 export const icons = {
@@ -28,6 +29,7 @@ export const icons = {
   models: ChevronDown,
   web: Globe,
   media: Paperclip,
+  logIn: LogIn
 } as const;
 
 export type IconType = keyof typeof icons;
