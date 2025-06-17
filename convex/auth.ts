@@ -38,12 +38,6 @@ export const createAuth = (ctx: GenericCtx) =>
     plugins: [
       convex(),
     ],
-    hooks: {
-      after: createAuthMiddleware(async (ctx) => {
-        console.log("after", ctx.setSignedCookie('test', 'test', 'test', { httpOnly: false, sameSite: 'lax', secure: true }))
-        await new Promise(resolve => setTimeout(resolve, 10000));
-      })
-    }
   });
 
 // These are required named exports

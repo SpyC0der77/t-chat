@@ -7,7 +7,6 @@ import ChatProvider from '@/frontend/chat/components/chat-provider';
 
 export default function App() {
   const { isAuthenticated: isCustomAuthenticated } = useCustomAuth();
-  console.log("isCustomAuthenticated", isCustomAuthenticated)
   return (
     <BrowserRouter>
       <Routes>

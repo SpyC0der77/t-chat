@@ -9,6 +9,7 @@ import { SettingNav, SettingNavSvg } from "@/components/setting-navigation"
 import { useConvex, useConvexAuth } from "convex/react"
 import { api } from "../../convex/_generated/api"
 import { AUTH_COOKIE_NAME } from "@/hooks/use-custom-auth"
+import ChatPrompt from "./chat/components/chat-prompt"
 
 const initialMessages = [
   {
@@ -95,81 +96,7 @@ function ChatContent() {
       </div>
       <div className="absolute bottom-0 top-0 w-full">
         <SettingNavSvg />
-        <div className="pointer-events-none absolute bottom-0 z-10 w-full px-2">
-          <div className="relative mx-auto flex w-full max-w-3xl flex-col text-center">
-            <div className="pointer-events-none">
-              <div className="pointer-events-auto">
-                <div
-                  className="border-reflect rounded-t-[20px] bg-(--chat-input-background) p-2 pb-0 backdrop-blur-lg ![--c:--chat-input-gradient]"
-                  style={{
-                    "--gradientBorder-gradient": "linear-gradient(180deg, var(--min), var(--max), var(--min)), linear-gradient(15deg, var(--min) 50%, var(--max))",
-                    "--start": "#000000e0",
-                    "--opacity": 1
-                  } as React.CSSProperties}
-                >
-                  <form
-                    className="relative flex w-full flex-col items-stretch gap-2 rounded-t-xl border border-b-0 border-white/70 bg-[--chat-input-background] px-3 pt-3 text-secondary-foreground outline-8 outline-[hsl(var(--chat-input-gradient)/0.5)] pb-3 max-sm:pb-6 sm:max-w-3xl dark:border-[hsl(0,0%,83%)]/[0.04] dark:bg-secondary/[0.045] dark:outline-chat-background/40"
-                    style={{ boxShadow: "rgba(0, 0, 0, 0.1) 0px 80px 50px 0px, rgba(0, 0, 0, 0.07) 0px 50px 30px 0px, rgba(0, 0, 0, 0.06) 0px 30px 15px 0px, rgba(0, 0, 0, 0.04) 0px 15px 8px, rgba(0, 0, 0, 0.04) 0px 6px 4px, rgba(0, 0, 0, 0.02) 0px 2px 2px" }}
-                    onSubmit={(e) => e.preventDefault()}
-                  >
-                    <div className="flex flex-grow flex-col">
-                      <div className="flex flex-grow flex-row  items-start">
-                        <textarea
-                          name="input"
-                          id="chat-input"
-                          placeholder="Type your message here nerd..."
-                          aria-label="Message input"
-                          aria-describedby="chat-input-description"
-                          autoComplete="off"
-                          className="w-full resize-none bg-transparent text-base leading-6 text-foreground outline-none placeholder:text-secondary-foreground/60 disabled:opacity-0"
-                          style={{ height: "48px !important" }}
-                        />
-                        <div id="chat-input-description" className="sr-only">
-                          Press Enter to send, Shift+Enter to new line
-                        </div>
-                      </div>
-                      <div className="-mb-px mt-2 flex w-full flex-row-reverse justify-between">
-                        <div className="-mr-0.5 -mt-0.5 flex items-center justify-center gap-2" aria-label="Message actions">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="border-reflect button-reflect bg-[rgb(162,59,103)] font-semibold shadow hover:bg-[#d56698] active:bg-[rgb(162,59,103)] disabled:hover:bg-[rgb(162,59,103)] disabled:active:bg-[rgb(162,59,103)] dark:bg-primary/20 dark:hover:bg-pink-800/70 dark:active:bg-pink-800/40 disabled:dark:hover:bg-primary/20 disabled:dark:active:bg-primary/20 h-9 w-9 relative rounded-lg p-2 text-pink-50"
-                          >
-                            <Icon name="send" className="!size-5" />
-                          </Button>
-                        </div>
-                        <div className="flex flex-col gap-2 pr-2 sm:flex-row sm:items-center">
-                          <div className="ml-[-7px] flex items-center gap-1">
-                            <Button
-                              variant="ghost"
-                              className="h-8 text-xs gap-2 px-2 py-1.5 -mb-2 text-muted-foreground"
-                            >
-                              Gemini 2.5 Flash
-                              <Icon name="models" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              className="text-xs -mb-1.5 h-auto gap-2 rounded-full border border-solid border-secondary-foreground/10 py-1.5 pl-2 pr-2.5 text-muted-foreground max-sm:p-2"
-                            >
-                              <Icon name="web" />
-                              Search
-                            </Button>
-                            <Button
-                              variant={"outline"}
-                              className="text-xs -mb-1.5 h-auto gap-2 rounded-full border border-solid border-secondary-foreground/10 py-1.5 pl-2 pr-2.5 text-muted-foreground max-sm:p-2"
-                            >
-                              <Icon name="media" />
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ChatPrompt />
         <div className="absolute inset-0 overflow-y-scroll sm:pt-3.5 pb-[144px]" style={{ scrollbarGutter: "stable both-edges" }}>
           <SettingNavSvg className="z-20 h-16 w-20" />
           <SettingNav />
@@ -186,7 +113,6 @@ export default function FullChatApp() {
   useEffect(() => {
     async function getUser() {
       const user = (await convex.query(api.auth.getCurrentUser))!;
-      console.log("user", user);
       const cookieObject = JSON.stringify({
         id: user.userId,
         name: user.name,
@@ -198,7 +124,6 @@ export default function FullChatApp() {
     }
 
     if (isAuthenticated) {
-      console.log("isAuthenticated", isAuthenticated)
       getUser();
     }
   }, [isAuthenticated])
