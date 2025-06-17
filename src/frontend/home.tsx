@@ -566,7 +566,7 @@ function ChatContent() {
 
 export default function FullChatApp() {
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={true}>
       <BgGradient />
       <ChatSidebar />
       <SidebarNav />

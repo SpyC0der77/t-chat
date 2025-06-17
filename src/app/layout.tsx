@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { ConvexClientProvider } from "@/services/auth/components/convex-client";
+import Provider from "@/app/provider";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -24,16 +23,9 @@ export default function RootLayout({
       <body
         className={`${montserrat.variable} antialiased selection:bg-primary selection:text-white [font-feature-settings:'ss05'_on]`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <ConvexClientProvider>
-            {children}
-          </ConvexClientProvider>
-        </ThemeProvider>
+        <Provider>
+          {children}
+        </Provider>
       </body>
     </html>
   );
