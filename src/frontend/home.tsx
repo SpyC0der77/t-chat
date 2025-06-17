@@ -22,6 +22,7 @@ import SidebarNav from "@/components/sidebar-navigation"
 import { CollapsibleContent } from "@radix-ui/react-collapsible"
 import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { SettingNav, SettingNavSvg } from "@/components/setting-navigation"
+import { useCookie } from "@/hooks/use-cookie"
 
 // Initial conversation history
 const conversationHistory = [
@@ -557,6 +558,7 @@ function ChatContent() {
           </div>
         </div>
         <div className="absolute inset-0 overflow-y-scroll sm:pt-3.5 pb-[144px]" style={{ scrollbarGutter: "stable both-edges" }}>
+          <SettingNavSvg className="z-20 h-16 w-20" />
           <SettingNav />
         </div>
       </div>

@@ -1,20 +1,17 @@
 import { Route, BrowserRouter, Routes, Navigate } from 'react-router';
-import Auth from './auth';
-import { useConvexAuth } from 'convex/react';
+import Auth from '@/frontend/auth';
 import ProtectedRoute from '@/components/protected';
-import Home from './home';
+import Home from '@/frontend/home';
+import { useCustomAuth } from '@/hooks/use-custom-auth';
 
 export default function App() {
-  const { isLoading, isAuthenticated } = useConvexAuth();
-  if (isLoading) {
-    return <div>Loading application...</div>;
-  }
+  const { isAuthenticated: isCustomAuthenticated } = useCustomAuth();
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={
-          isAuthenticated ? <Navigate to="/settings/subscription" replace /> : <Auth />
+          isCustomAuthenticated ? <Navigate to="/settings/subscription" replace /> : <Auth />
         } />
         <Route element={<ProtectedRoute />}>
           <Route path="/settings/subscription" element={<h1>Subscription Page - Hello World</h1>} />
