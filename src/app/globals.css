@@ -181,6 +181,16 @@
     --start: #000000d9 !important;
   }
 
+  [data-state="inactive"].border-reflect:before {
+    content: none;
+  }
+
+  :focus-visible {
+    outline-color: var(--ring);
+    outline-style: solid;
+    outline-width: 1px;
+  }
+
   .border-reflect:before {
     content: "";
     pointer-events: none;

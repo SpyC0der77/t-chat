@@ -12,7 +12,11 @@ import {
   ChevronDown,
   Globe,
   Paperclip,
-  LogIn
+  LogIn,
+  Sparkles,
+  Newspaper,
+  Code,
+  GraduationCap
 } from "lucide-react";
 
 export const icons = {
@@ -29,7 +33,11 @@ export const icons = {
   models: ChevronDown,
   web: Globe,
   media: Paperclip,
-  logIn: LogIn
+  logIn: LogIn,
+  create: Sparkles,
+  explore: Newspaper,
+  code: Code,
+  learn: GraduationCap,
 } as const;
 
 export type IconType = keyof typeof icons;

@@ -1,28 +1,56 @@
 import { Button } from "@/components/ui/button"
 import { Icon } from "@/components/icon"
 import { useLocalStorage } from "usehooks-ts";
-import { useMutation } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
+//import { useMutation } from "convex/react";
+//import { api } from "../../../../convex/_generated/api";
+import { useChatAI } from "@/frontend/chat/contexts/ai";
+import { useEffect, useRef } from "react";
 
 const DRAFT_KEY = "draft_prompt";
+
 export default function ChatPrompt() {
-  const createThread = useMutation(api.thread.createThread);
+  const formRef = useRef<HTMLFormElement>(null);
+  const { input, setInput, append } = useChatAI();
+  //const createThread = useMutation(api.thread.createThread);
   const [draft, setDraft, removeDraft] = useLocalStorage<string>(DRAFT_KEY, "");
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    setInput(draft);
+  }, [])
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (draft.length === 0) return;
-    const id = await createThread();
-    console.log("thread id", id);
+    if (input.trim().length === 0) return;
+    //const id = await createThread();
+    //console.log("thread id", id);
+    //append({
+    //  role: "user",
+    //  content: input,
+    //});
     removeDraft();
+    setInput("");
+  };
+
+  const changeHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDraft(e.target.value.trim());
+    setInput(e.target.value);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (formRef.current) {
+        formRef.current.requestSubmit();
+      }
+    }
   };
 
   return (
     <PromptWrapper>
       <form
+        ref={formRef}
         className="relative flex w-full flex-col items-stretch gap-2 rounded-t-xl border border-b-0 border-white/70 bg-[--chat-input-background] px-3 pt-3 text-secondary-foreground outline-8 outline-[hsl(var(--chat-input-gradient)/0.5)] pb-3 max-sm:pb-6 sm:max-w-3xl dark:border-[hsl(0,0%,83%)]/[0.04] dark:bg-secondary/[0.045] dark:outline-chat-background/40"
         style={{ boxShadow: "rgba(0, 0, 0, 0.1) 0px 80px 50px 0px, rgba(0, 0, 0, 0.07) 0px 50px 30px 0px, rgba(0, 0, 0, 0.06) 0px 30px 15px 0px, rgba(0, 0, 0, 0.04) 0px 15px 8px, rgba(0, 0, 0, 0.04) 0px 6px 4px, rgba(0, 0, 0, 0.02) 0px 2px 2px" }}
-        onSubmit={handleSubmit}
+        onSubmit={submitHandler}
       >
         <div className="flex flex-grow flex-col">
           <div className="flex flex-grow flex-row  items-start">
@@ -35,7 +63,9 @@ export default function ChatPrompt() {
               autoComplete="off"
               className="w-full resize-none bg-transparent text-base leading-6 text-foreground outline-none placeholder:text-secondary-foreground/60 disabled:opacity-0"
               style={{ height: "48px !important" }}
-              onChange={(e) => { setDraft(e.target.value.trim()) }}
+              value={input || draft || ""}
+              onChange={changeHandler}
+              onKeyDown={handleKeyDown}
             />
             <div id="chat-input-description" className="sr-only">
               Press Enter to send, Shift+Enter to new line

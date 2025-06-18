@@ -1,134 +1,111 @@
-import { Button } from "@/components/ui/button"
-import {
-  useSidebar,
-} from "@/components/ui/sidebar"
-import { cn } from "@/lib/utils"
-import { useEffect, useRef, useState } from "react"
-import { Icon } from "@/components/icon"
 import { SettingNav, SettingNavSvg } from "@/components/setting-navigation"
-import { useConvex, useConvexAuth } from "convex/react"
-import { api } from "../../convex/_generated/api"
-import { AUTH_COOKIE_NAME } from "@/hooks/use-custom-auth"
-import ChatPrompt from "./chat/components/chat-prompt"
+import ChatPrompt from "@/frontend/chat/components/chat-prompt"
+import { useCustomAuth } from "@/hooks/use-custom-auth";
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from "@/components/ui/tabs"
+import { Icon } from "@/components/icon";
+import { IconType } from "@/lib/icons";
+import { useChatAI } from "./chat/contexts/ai";
+import { cn } from "@/lib/utils";
 
-const initialMessages = [
-  {
-    id: 1,
-    role: "user",
-    content: "Hello! Can you help me with a coding question?",
+const promptSuggestions: Record<string, { title: string, icon: IconType, prompts: string[] }> = {
+  create: {
+    title: "Create",
+    icon: "create",
+    prompts: [
+      "Write a short story about a robot discovering emotions",
+      "Help me outline a sci-fi novel set in a post-apocalyptic world",
+      "Create a character profile for a complex villain with sympathetic motives ",
+      "Give me 5 creative writing prompts for flash fiction "
+    ]
   },
-  {
-    id: 2,
-    role: "assistant",
-    content:
-      "Of course! I'd be happy to help with your coding question. What would you like to know?",
+  explore: {
+    title: "Explore",
+    icon: "explore",
+    prompts: [
+      "Good books for fans of Rick Rubin ",
+      "Countries ranked by number of corgis ",
+      "Most successful companies in the world ",
+      "How much does Claude cost? ",
+    ]
   },
-  {
-    id: 3,
-    role: "user",
-    content: "How do I create a responsive layout with CSS Grid?",
+  code: {
+    title: "Code",
+    icon: "code",
+    prompts: [
+      "Write code to invert a binary search tree in Python ",
+      "What's the difference between Promise.all and Promise.allSettled? ",
+      "Explain React's useEffect cleanup function ",
+      "Best practices for error handling in async/await ",
+    ]
   },
-  {
-    id: 4,
-    role: "assistant",
-    content:
-      "Creating a responsive layout with CSS Grid is straightforward. Here's a basic example:\n\n```css\n.container {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));\n  gap: 1rem;\n}\n```\n\nThis creates a grid where:\n- Columns automatically fit as many as possible\n- Each column is at least 250px wide\n- Columns expand to fill available space\n- There's a 1rem gap between items\n\nWould you like me to explain more about how this works?",
-  },
-]
-
-
-function ChatContent() {
-  const [prompt, setPrompt] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [chatMessages, setChatMessages] = useState(initialMessages)
-  const chatContainerRef = useRef<HTMLDivElement>(null)
-  const { open } = useSidebar()
-
-  const handleSubmit = () => {
-    if (!prompt.trim()) return
-
-    setPrompt("")
-    setIsLoading(true)
-
-    // Add user message immediately
-    const newUserMessage = {
-      id: chatMessages.length + 1,
-      role: "user",
-      content: prompt.trim(),
-    }
-
-    setChatMessages([...chatMessages, newUserMessage])
-
-    // Simulate API response
-    setTimeout(() => {
-      const assistantResponse = {
-        id: chatMessages.length + 2,
-        role: "assistant",
-        content: `This is a response to: "${prompt.trim()}"`,
-      }
-
-      setChatMessages((prev) => [...prev, assistantResponse])
-      setIsLoading(false)
-    }, 1500)
+  learn: {
+    title: "Learn",
+    icon: "learn",
+    prompts: [
+      "Beginner's guide to TypeScript ",
+      "Explain the CAP theorem in distributed systems ",
+      "Why is AI so expensive? ",
+      "Are black holes real? ",
+    ]
   }
+};
 
+export default function ChatContent() {
+  const { isAuthenticated, session } = useCustomAuth();
+  const { setInput, input } = useChatAI();
+
+  const handlePromptClick = (prompt: string) => {
+    setInput(prompt);
+  };
   return (
-    <main className="flex min-h-svh flex-col overflow-hidden w-full relative transistion-[width,height]">
-      <div
-        className={cn(
-          "absolute bottom-0 top-0 w-full overflow-hidden border-l border-t border-chat-border bg-chat-background bg-fixed pb-[140px] transition-all ease-snappy max-sm:border-none sm:translate-y-3.5 sm:rounded-tl-xl",
-          !open && "!translate-y-0 !rounded-none border-none"
-        )}>
-        <div className={cn(
-          "bg-noise absolute inset-0 -top-3.5 bg-fixed transition-transform ease-snappy [background-position:right_bottom]",
-          !open && "translate-y-3.5"
-        )} />
-      </div>
-      <div
-        className={cn(
-          "absolute inset-x-3 top-0 z-10 box-content overflow-hidden border-b border-chat-border bg-gradient-noise-top/80 backdrop-blur-md transition-[transform,border] ease-snappy blur-fallback:bg-gradient-noise-top max-sm:hidden sm:h-3.5",
-          !open && "-translate-y-[15px] border-transparent"
-        )}
-      >
-        <div className="absolute left-0 top-0 h-full w-8 bg-gradient-to-r from-gradient-noise-top to-transparent blur-fallback:hidden" />
-        <div className="absolute right-24 top-0 h-full w-8 bg-gradient-to-l from-gradient-noise-top to-transparent blur-fallback:hidden" />
-        <div className="absolute right-0 top-0 h-full w-24 bg-gradient-noise-top blur-fallback:hidden" />
-      </div>
-      <div className="absolute bottom-0 top-0 w-full">
-        <SettingNavSvg />
-        <ChatPrompt />
-        <div className="absolute inset-0 overflow-y-scroll sm:pt-3.5 pb-[144px]" style={{ scrollbarGutter: "stable both-edges" }}>
-          <SettingNavSvg className="z-20 h-16 w-20" />
-          <SettingNav />
+    <>
+      <ChatPrompt />
+      <div className="absolute inset-0 overflow-y-scroll sm:pt-3.5 pb-[144px]" style={{ scrollbarGutter: "stable both-edges" }}>
+        <SettingNavSvg className="z-20 h-16 w-20" />
+        <SettingNav />
+        <div role='log' aria-label='Chat messages' araia-live='polite' className="mx-auto flex w-full max-w-3xl flex-col space-y-12 px-4 py-10">
+          <div className="flex h-[calc(100vh-20rem)] items-start justify-center">
+            <div
+              className={cn(
+                "w-full space-y-6 px-2 pt-[calc(max(15vh,2.5rem))] duration-300 animate-in fade-in-50 zoom-in-95 sm:px-8",
+                input.length && "pointer-events-none opacity-0 animate-out fade-out-0 zoom-out-105"
+              )}>
+              <h2 className="text-3xl font-semibold">
+                How can I help you
+                {isAuthenticated && (", " + session.name!.split(" ")[0])}
+                ?
+              </h2>
+              <Tabs
+                defaultValue={Object.keys(promptSuggestions)[0]}
+                className="gap-6"
+              >
+                <TabsList className="gap-2.5 text-sm max-sm:justify-evenly bg-transparent p-0">
+                  {Object.keys(promptSuggestions).map((key) => (
+                    <TabsTrigger key={key} value={key}>
+                      <Icon name={promptSuggestions[key].icon} className="max-sm:block" />
+                      {promptSuggestions[key].title}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+                {Object.keys(promptSuggestions).map((key) => (
+                  <TabsContent value={key} key={key}>
+                    {promptSuggestions[key].prompts.map((prompt, index) => (
+                      <div key={index} className="border-t border-secondary/40 py-1 first:border-none">
+                        <button
+                          onMouseDown={() => handlePromptClick(prompt)}
+                          className="w-full rounded-md py-2 text-left text-secondary-foreground hover:bg-secondary/50 sm:px-3 cusror-pointer"
+                        >
+                          <span>{prompt}</span>
+                        </button>
+                      </div>
+                    ))}
+                  </TabsContent>
+                ))}
+              </Tabs>
+            </div>
+          </div>
         </div>
       </div>
-    </main>
-  )
-}
-
-export default function FullChatApp() {
-  const { isAuthenticated } = useConvexAuth();
-  const convex = useConvex();
-
-  useEffect(() => {
-    async function getUser() {
-      const user = (await convex.query(api.auth.getCurrentUser))!;
-      const cookieObject = JSON.stringify({
-        id: user.userId,
-        name: user.name,
-        picture: user.picture,
-        email: user.email,
-      });
-      const maxAge = 60 * 60 * 24 * 7;
-      document.cookie = `${AUTH_COOKIE_NAME}=${cookieObject}; Max-Age=${maxAge}; Path=/; SameSite=Lax`;
-    }
-
-    if (isAuthenticated) {
-      getUser();
-    }
-  }, [isAuthenticated])
-
-  return (
-    <ChatContent />
+    </>
   )
 }
