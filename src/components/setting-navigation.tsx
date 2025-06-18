@@ -2,7 +2,7 @@ import { useSidebar } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { Icon } from "@/components/icon"
 import { cn } from "@/lib/utils";
-import Link from "next/link";
+import { Link } from "react-router";
 
 export function SettingNavSvg({ className, ...props }: React.ComponentProps<"div">) {
   const { open } = useSidebar();
@@ -49,7 +49,7 @@ export function SettingNav() {
             open && "rounded-bl-xl"
           )}
         >
-          <Link href="/settings/customization">
+          <Link to="/settings/customization">
             <Icon name="settings" className="size-4" />
             <span className="sr-only">Settings</span>
           </Link>

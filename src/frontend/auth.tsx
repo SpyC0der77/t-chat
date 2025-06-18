@@ -2,7 +2,7 @@ import BackButton from "@/components/back-button";
 import BgGradient from "@/components/bg-gradient";
 import SignIn from "@/services/auth/components/sign-in";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "react-router";
 
 export default function Auth() {
   return (
@@ -28,7 +28,7 @@ export default function Auth() {
       </div>
       <SignIn />
       <div className="mt-6 text-center text-sm text-muted-foreground/60">
-        <p>By continuing, you agree to our <Link href="/terms-of-service" className="text-muted-foreground hover:text-white">Terms of Service</Link> and <Link href="/privacy-policy" className="text-muted-foreground hover:text-white">Privacy Policy</Link></p>
+        <p>By continuing, you agree to our <Link to="/terms-of-service" className="text-muted-foreground hover:text-white">Terms of Service</Link> and <Link to="/privacy-policy" className="text-muted-foreground hover:text-white">Privacy Policy</Link></p>
       </div>
     </div>
   );

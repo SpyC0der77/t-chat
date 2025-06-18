@@ -2,7 +2,7 @@ import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { Icon } from "@/components/icon"
 import { cn } from "@/lib/utils";
-import Link from "next/link";
+import { Link } from "react-router";
 
 export default function SidebarNav() {
   const { open } = useSidebar();
@@ -34,7 +34,7 @@ export default function SidebarNav() {
           open && "sm:pointer-events-none sm:-translate-x-[2.125rem] sm:opacity-0 sm:delay-0 sm:duration-150"
         )}
       >
-        <Link href="/">
+        <Link to="/">
           <Icon name="newThread" />
           <span className="sr-only">New Thread</span>
         </Link>

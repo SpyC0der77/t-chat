@@ -5,12 +5,11 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import Link from "next/link"
+import { Link } from "react-router"
 import { Icon } from "@/components/icon"
 import { CollapsibleContent } from "@radix-ui/react-collapsible"
 import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible"
 import ThreadAction from "@/frontend/chat/components/thread-action"
-import { useCustomAuth } from "@/hooks/use-custom-auth"
 import { useQuery } from "convex/react"
 import { api } from "../../../../convex/_generated/api"
 import { useRef } from "react"
@@ -153,7 +152,7 @@ export default function Thread() {
                       <SidebarMenuItem>
                         <Link
                           className="group/link relative flex h-9 w-full items-center overflow-hidden rounded-lg px-2 py-1 text-sm outline-none hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring hover:focus-visible:bg-sidebar-accent"
-                          href={`/chat/${conversation.id}`}
+                          to={`/chat/${conversation.id}`}
                         >
                           <div className="relative flex w-full items-center">
                             <input
