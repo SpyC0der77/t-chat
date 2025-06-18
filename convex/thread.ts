@@ -1,17 +1,22 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
+import { betterAuthComponent } from "./auth";
+import { Id } from "./_generated/dataModel";
 
 const INITIAL_TITLE = "Nerding Title";
 
 export const createThread = mutation({
-  args: {
-    userId: v.id("users"),
-  },
-  handler: async (ctx, args) => {
+  args: {},
+  handler: async (ctx) => {
     const now = Date.now();
+    const userMetadata = await betterAuthComponent.getAuthUser(ctx);
+    if (!userMetadata) {
+      return null;
+    }
+    const userId = userMetadata.userId;
     const threadId = await ctx.db.insert("threads", {
       title: INITIAL_TITLE,
-      userId: args.userId,
+      userId: userId as Id<"users">,
       createdAt: now,
       updatedAt: now,
       lastMessageAt: now,

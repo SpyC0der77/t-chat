@@ -6,15 +6,14 @@ import { api } from "../../../../convex/_generated/api";
 
 const DRAFT_KEY = "draft_prompt";
 export default function ChatPrompt() {
-  const createThread = useMutation(api.threads.createThread);
+  const createThread = useMutation(api.thread.createThread);
   const [draft, setDraft, removeDraft] = useLocalStorage<string>(DRAFT_KEY, "");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (draft.length === 0) return;
-    await createThread({
-      userId: "user1",
-    });
+    const id = await createThread();
+    console.log("thread id", id);
     removeDraft();
   };
 
@@ -23,7 +22,7 @@ export default function ChatPrompt() {
       <form
         className="relative flex w-full flex-col items-stretch gap-2 rounded-t-xl border border-b-0 border-white/70 bg-[--chat-input-background] px-3 pt-3 text-secondary-foreground outline-8 outline-[hsl(var(--chat-input-gradient)/0.5)] pb-3 max-sm:pb-6 sm:max-w-3xl dark:border-[hsl(0,0%,83%)]/[0.04] dark:bg-secondary/[0.045] dark:outline-chat-background/40"
         style={{ boxShadow: "rgba(0, 0, 0, 0.1) 0px 80px 50px 0px, rgba(0, 0, 0, 0.07) 0px 50px 30px 0px, rgba(0, 0, 0, 0.06) 0px 30px 15px 0px, rgba(0, 0, 0, 0.04) 0px 15px 8px, rgba(0, 0, 0, 0.04) 0px 6px 4px, rgba(0, 0, 0, 0.02) 0px 2px 2px" }}
-        onSubmit={(e) => { e.preventDefault(); console.log("submit") }}
+        onSubmit={handleSubmit}
       >
         <div className="flex flex-grow flex-col">
           <div className="flex flex-grow flex-row  items-start">
