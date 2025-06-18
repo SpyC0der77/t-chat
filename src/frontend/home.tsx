@@ -1,11 +1,17 @@
 import { SettingNav, SettingNavSvg } from "@/components/setting-navigation"
-import ChatPrompt from "@/frontend/chat/components/chat-prompt"
+import ChatPrompt, { DRAFT_KEY } from "@/frontend/chat/components/chat-prompt"
 import { useCustomAuth } from "@/hooks/use-custom-auth";
 import { Tabs, TabsContent, TabsList, TabsTrigger, } from "@/components/ui/tabs"
 import { Icon } from "@/components/icon";
 import { IconType } from "@/lib/icons";
-import { useChatAI } from "./chat/contexts/ai";
 import { cn } from "@/lib/utils";
+import { useLocalStorage } from "usehooks-ts";
+import { useChat } from "@ai-sdk/react";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { useNavigate } from "react-router";
+import { useState } from "react";
+import { useChatAI } from "./chat/contexts/model";
 
 const promptSuggestions: Record<string, { title: string, icon: IconType, prompts: string[] }> = {
   create: {
@@ -51,15 +57,52 @@ const promptSuggestions: Record<string, { title: string, icon: IconType, prompts
 };
 
 export default function ChatContent() {
+  const createThread = useMutation(api.thread.createThread);
+  const createMessage = useMutation(api.message.createMessage);
+  const user = useQuery(api.auth.getCurrentUser);
+  const { model } = useChatAI();
+  const [createThreadId, setCreateThreadId] = useState<string | null>(null);
   const { isAuthenticated, session } = useCustomAuth();
-  const { setInput, input } = useChatAI();
+  const navigate = useNavigate();
+  const [_, setDraft] = useLocalStorage<string>(DRAFT_KEY, "");
+
+  const { setInput, input, append } = useChat({
+    body: { userId: user?.userId!, threadId: createThreadId, model },
+  });
 
   const handlePromptClick = (prompt: string) => {
     setInput(prompt);
+    setDraft(prompt);
   };
+
+  const handleAppend = async (message: string) => {
+    if (!isAuthenticated) {
+      return navigate('/auth');
+    }
+    const thread = await createThread();
+    if (!thread) return;
+    console.log("thread id", thread.threadId);
+    setCreateThreadId(thread.threadId);
+    await createMessage({
+      threadId: thread.threadId,
+      content: message,
+      role: "user",
+      status: "done",
+    });
+    append({
+      role: "user",
+      content: message,
+    });
+    navigate(`/chat/${thread.threadId}`);
+  };
+
   return (
     <>
-      <ChatPrompt />
+      <ChatPrompt
+        input={input}
+        setInput={setInput}
+        append={handleAppend}
+      />
       <div className="absolute inset-0 overflow-y-scroll sm:pt-3.5 pb-[144px]" style={{ scrollbarGutter: "stable both-edges" }}>
         <SettingNavSvg className="z-20 h-16 w-20" />
         <SettingNav />

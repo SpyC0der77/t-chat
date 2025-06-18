@@ -1,20 +1,27 @@
 import { Button } from "@/components/ui/button"
 import { Icon } from "@/components/icon"
 import { useLocalStorage } from "usehooks-ts";
-//import { useMutation } from "convex/react";
-//import { api } from "../../../../convex/_generated/api";
-import { useChatAI } from "@/frontend/chat/contexts/ai";
 import { useEffect, useRef } from "react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { useChatAI } from "../contexts/model";
 
-const DRAFT_KEY = "draft_prompt";
+export const DRAFT_KEY = "draft_prompt";
 const MAX_TEXTAREA_HEIGHT = 240;
 const LINE_HEIGHT_PX = 24;
 
-export default function ChatPrompt() {
+interface ChatPromptProps {
+  input: string;
+  setInput: (input: string) => void;
+  append: (message: string) => Promise<void>;
+}
+export default function ChatPrompt({ input, setInput, append }: ChatPromptProps) {
+
   const formRef = useRef<HTMLFormElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { input, setInput, append } = useChatAI();
-  //const createThread = useMutation(api.thread.createThread);
   const [draft, setDraft, removeDraft] = useLocalStorage<string>(DRAFT_KEY, "");
 
   useEffect(() => {
@@ -32,12 +39,7 @@ export default function ChatPrompt() {
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (input.trim().length === 0) return;
-    //const id = await createThread();
-    //console.log("thread id", id);
-    //append({
-    //  role: "user",
-    //  content: input,
-    //});
+    await append(input);
     removeDraft();
     setInput("");
     if (textareaRef.current) {
@@ -117,18 +119,43 @@ const SendButton = () => {
   )
 }
 
+const modelRegistry = {
+  "gpt-4": { provider: "openai", modelId: "gpt-4" },
+  "gpt-4o": { provider: "openai", modelId: "gpt-4o" },
+  "gpt-3.5-turbo": { provider: "openai", modelId: "gpt-3.5-turbo" },
+  "gemini-2.0": { provider: "google", modelId: "gemini-2.0-flash" },
+  "gemini-2.5": { provider: "google", modelId: "gemini-2.5-pro-preview-05-06" },
+};
 const PromptActions = () => {
+  const { handleModelChange, model } = useChatAI();
+  const handleClick = (key: string) => {
+    console.log("handle click", key);
+    handleModelChange(key);
+  }
   return (
     <div className="flex flex-col gap-2 pr-2 sm:flex-row sm:items-center">
       <div className="ml-[-7px] flex items-center gap-1">
-        <Button
-          variant="ghost"
-          type="button"
-          className="h-8 text-xs gap-2 px-2 py-1.5 -mb-2 text-muted-foreground"
-        >
-          Gemini 2.5 Flash
-          <Icon name="models" />
-        </Button>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              type="button"
+              className="h-8 text-xs gap-2 px-2 py-1.5 -mb-2 text-muted-foreground"
+            >
+              {model}
+              <Icon name="models" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-52 rounded-lg bg-background p-4 text-popover-foreground shadow-xl">
+            <div className="flex flex-col gap-2">
+              {Object.keys(modelRegistry).map((key) => (
+                <Button variant={"ghost"} key={key} className="flex items-center gap-2" onClick={() => handleClick(key)}>
+                  <span className="text-sm">{key}</span>
+                </Button>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
         <Button
           type="button"
           variant="outline"

@@ -10,6 +10,7 @@
 
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
+import type * as message from "../message.js";
 import type * as thread from "../thread.js";
 import type * as util from "../util.js";
 
@@ -30,6 +31,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   http: typeof http;
+  message: typeof message;
   thread: typeof thread;
   util: typeof util;
 }>;

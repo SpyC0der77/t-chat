@@ -1,25 +1,26 @@
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { betterAuthComponent } from "./auth";
 import { Id } from "./_generated/dataModel";
 import { MessageStatusValidator } from "./schema";
 export const createMessage = mutation({
   args: {
     threadId: v.string(),
+    userId: v.optional(v.id("users")),
     content: v.string(),
     role: v.union(v.literal("user"), v.literal("assistant")),
     status: MessageStatusValidator,
-    modal: v.string(),
+    modal: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const messageId = crypto.randomUUID();
     const userMetadata = await betterAuthComponent.getAuthUser(ctx);
-    if (!userMetadata) {
+    if (!userMetadata && !args.userId) {
       return null;
     }
-    const userId = userMetadata.userId;
+    const userId = userMetadata ? userMetadata.userId : args.userId;
     const now = Date.now();
-    return await ctx.db.insert("messages", {
+    await ctx.db.insert("messages", {
       messageId,
       threadId: args.threadId,
       userId: userId as Id<"users">,
@@ -28,8 +29,9 @@ export const createMessage = mutation({
       role: args.role,
       createdAt: now,
       updatedAt: now,
-      modal: args.modal,
+      modal: args.modal || '',
     });
+    return messageId;
   },
 });
 
@@ -52,3 +54,26 @@ export const updateMessage = mutation({
     });
   },
 });
+
+export const getMessageByThreadId = query({
+  args: {
+    threadId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userMetadata = await betterAuthComponent.getAuthUser(ctx);
+    if (!userMetadata) {
+      return null;
+    }
+    const userId = userMetadata.userId;
+    const messages = await ctx.db
+      .query("messages")
+      .filter((q) => q.and(
+        q.eq(q.field("threadId"), args.threadId),
+        q.eq(q.field("userId"), userId)
+      ))
+      .order("asc")
+      .collect();
+    return messages;
+  },
+});
+

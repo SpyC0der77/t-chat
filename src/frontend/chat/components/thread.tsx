@@ -10,82 +10,128 @@ import { Icon } from "@/components/icon"
 import { CollapsibleContent } from "@radix-ui/react-collapsible"
 import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible"
 import ThreadAction from "@/frontend/chat/components/thread-action"
+import { useCustomAuth } from "@/hooks/use-custom-auth"
+import { useQuery } from "convex/react"
+import { api } from "../../../../convex/_generated/api"
+import { useRef } from "react"
 
-const conversationHistory = [
-  {
-    period: "Today",
-    conversations: [
-      {
-        id: "t1",
-        title: "Project roadmap discussion and you and me abnd you",
-        lastMessage:
-          "Let's prioritize the authentication features for the next sprint.",
-        timestamp: new Date().setHours(new Date().getHours() - 2),
-      },
-      {
-        id: "t2",
-        title: "API Documentation Review",
-        lastMessage:
-          "The endpoint descriptions need more detail about rate limiting.",
-        timestamp: new Date().setHours(new Date().getHours() - 5),
-      },
-    ],
-  },
-  {
-    period: "Yesterday",
-    conversations: [
-      {
-        id: "y1",
-        title: "Database Schema Design",
-        lastMessage:
-          "Let's add indexes to improve query performance on these tables.",
-        timestamp: new Date().setDate(new Date().getDate() - 1),
-      },
-      {
-        id: "y2",
-        title: "Performance Optimization",
-        lastMessage:
-          "The lazy loading implementation reduced initial load time by 40%.",
-        timestamp: new Date().setDate(new Date().getDate() - 1),
-      },
-    ],
-  },
-  {
-    period: "Last 7 days",
-    conversations: [
-      {
-        id: "w1",
-        title: "Authentication Flow",
-        lastMessage: "We should implement the OAuth2 flow with refresh tokens.",
-        timestamp: new Date().setDate(new Date().getDate() - 3),
-      },
-      {
-        id: "w2",
-        title: "Component Library",
-        lastMessage:
-          "These new UI components follow the design system guidelines perfectly.",
-        timestamp: new Date().setDate(new Date().getDate() - 5),
-      },
-    ],
-  },
-  {
-    period: "Last month",
-    conversations: [
-      {
-        id: "m1",
-        title: "Initial Project Setup",
-        lastMessage:
-          "All the development environments are now configured consistently.",
-        timestamp: new Date().setDate(new Date().getDate() - 15),
-      },
-    ],
-  },
-]
+interface ThreadItem {
+  _creationTime: number
+  _id: string
+  createdAt: number
+  generationStatus: string
+  lastMessageAt: number
+  threadId: string
+  title: string
+  updatedAt: number
+  userId: string
+  visibility: string
+}
+
+// Define the type for the grouped conversations
+interface GroupedConversation {
+  period: string
+  conversations: {
+    id: string
+    title: string
+    lastMessage?: string // Assuming lastMessage is not always present in your raw data
+    timestamp: number
+  }[]
+}
+
+const groupThreadsByPeriod = (
+  threads: ThreadItem[] | undefined
+): GroupedConversation[] => {
+  if (!threads) {
+    return []
+  }
+
+  const now = new Date()
+  const today = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  ).getTime()
+  const yesterday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() - 1
+  ).getTime()
+  const last7Days = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() - 6
+  ).getTime() // Covers today and the last 6 days
+  const lastMonth = new Date(
+    now.getFullYear(),
+    now.getMonth() - 1,
+    now.getDate()
+  ).getTime()
+
+  const grouped: { [key: string]: GroupedConversation } = {
+    Today: { period: "Today", conversations: [] },
+    Yesterday: { period: "Yesterday", conversations: [] },
+    "Last 7 days": { period: "Last 7 days", conversations: [] },
+    "Last month": { period: "Last month", conversations: [] },
+    Older: { period: "Older", conversations: [] }, // Add an "Older" category
+  }
+
+  // Sort threads by creation time in descending order
+  const sortedThreads = [...threads].sort(
+    (a, b) => b.createdAt - a.createdAt
+  )
+
+  sortedThreads.forEach((thread) => {
+    const threadTimestamp = thread.createdAt
+
+    const conversation = {
+      id: thread.threadId,
+      title: thread.title,
+      // You might want to fetch the actual last message if available,
+      // otherwise, you can leave it out or provide a placeholder.
+      // For now, I'm omitting it as your input data doesn't contain it.
+      timestamp: thread.lastMessageAt,
+    }
+
+    if (threadTimestamp >= today) {
+      grouped.Today.conversations.push(conversation)
+    } else if (threadTimestamp >= yesterday) {
+      grouped.Yesterday.conversations.push(conversation)
+    } else if (threadTimestamp >= last7Days) {
+      grouped["Last 7 days"].conversations.push(conversation)
+    } else if (threadTimestamp >= lastMonth) {
+      grouped["Last month"].conversations.push(conversation)
+    } else {
+      grouped.Older.conversations.push(conversation)
+    }
+  })
+
+  // Filter out empty groups and maintain order
+  const orderedGroups: GroupedConversation[] = []
+  if (grouped.Today.conversations.length > 0)
+    orderedGroups.push(grouped.Today)
+  if (grouped.Yesterday.conversations.length > 0)
+    orderedGroups.push(grouped.Yesterday)
+  if (grouped["Last 7 days"].conversations.length > 0)
+    orderedGroups.push(grouped["Last 7 days"])
+  if (grouped["Last month"].conversations.length > 0)
+    orderedGroups.push(grouped["Last month"])
+  if (grouped.Older.conversations.length > 0) orderedGroups.push(grouped.Older)
+
+  return orderedGroups
+}
+
 
 export default function Thread() {
+  const threads = useQuery(api.thread.getThreadsByUser)
+  let groupedConversationHistory: GroupedConversation[] = []
+  if (threads) {
+    groupedConversationHistory = groupThreadsByPeriod(threads)
+  }
+  console.log("grouped threads", groupedConversationHistory)
   return (
     <ThreadWrapper>
-      {conversationHistory.map((group) => (
+      {groupedConversationHistory.map((group) => (
         <Collapsible
           key={group.period}
           title={group.period}
@@ -138,22 +184,27 @@ export default function Thread() {
 }
 
 const ThreadWrapper = ({ children }: { children: React.ReactNode }) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const calculateHeight = containerRef.current?.clientHeight || 500;
   return (
-    <div style={{
-      overflowAnchor: 'none',
-      flex: '0 0 auto',
-      position: 'relative',
-      visibility: 'hidden',
-      width: '100%',
-      height: '1328px'
-    }}>
-      <div style={{
-        position: 'absolute',
-        top: '0px',
-        left: '0px',
+    <div
+      style={{
+        overflowAnchor: 'none',
+        flex: '0 0 auto',
+        position: 'relative',
+        visibility: 'hidden',
         width: '100%',
-        visibility: 'visible',
+        height: `${calculateHeight}px`
       }}>
+      <div
+        ref={containerRef}
+        style={{
+          position: 'absolute',
+          top: '0px',
+          left: '0px',
+          width: '100%',
+          visibility: 'visible',
+        }}>
         {children}
       </div>
     </div>

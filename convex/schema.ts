@@ -16,6 +16,7 @@ export default defineSchema({
     title: v.string(),
     userId: v.id("users"),
     threadId: v.string(),
+    pinned: v.boolean(),
     createdAt: v.number(),
     updatedAt: v.number(),
     lastMessageAt: v.number(),
@@ -30,6 +31,7 @@ export default defineSchema({
     .index("by_userId", ["userId"])
     .index("by_threadId", ["threadId"])
     .index("by_threadId_and_userId", ["threadId", "userId"])
+    .index("by_userId_and_pinned", ["userId", "pinned"])
     .index("by_userId_and_updatedAt", ["userId", "updatedAt"])
   ,
   messages: defineTable({

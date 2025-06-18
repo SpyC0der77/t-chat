@@ -12,7 +12,7 @@ import { useConvex, useConvexAuth } from "convex/react"
 import { api } from "../../../../convex/_generated/api"
 import { AUTH_COOKIE_NAME } from "@/hooks/use-custom-auth"
 import { Outlet } from "react-router"
-import { AIProvider } from "@/frontend/chat/contexts/ai"
+import { AIProvider } from "../contexts/model"
 
 export default function ChatProvider({ children }: { children?: React.ReactNode }) {
   const { isAuthenticated } = useConvexAuth();
