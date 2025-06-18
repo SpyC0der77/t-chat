@@ -7,16 +7,28 @@ import { useChatAI } from "@/frontend/chat/contexts/ai";
 import { useEffect, useRef } from "react";
 
 const DRAFT_KEY = "draft_prompt";
+const MAX_TEXTAREA_HEIGHT = 240;
+const LINE_HEIGHT_PX = 24;
 
 export default function ChatPrompt() {
   const formRef = useRef<HTMLFormElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { input, setInput, append } = useChatAI();
   //const createThread = useMutation(api.thread.createThread);
   const [draft, setDraft, removeDraft] = useLocalStorage<string>(DRAFT_KEY, "");
 
   useEffect(() => {
     setInput(draft);
-  }, [])
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto"; // Reset height to calculate scrollHeight
+      const newHeight = Math.min(
+        textareaRef.current.scrollHeight,
+        MAX_TEXTAREA_HEIGHT,
+      );
+      textareaRef.current.style.height = `${newHeight}px`;
+    }
+  }, []);
+
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (input.trim().length === 0) return;
@@ -28,11 +40,19 @@ export default function ChatPrompt() {
     //});
     removeDraft();
     setInput("");
+    if (textareaRef.current) {
+      textareaRef.current.style.height = `${LINE_HEIGHT_PX * 2}px`;
+    }
   };
 
   const changeHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const textarea = e.target;
     setDraft(e.target.value.trim());
     setInput(e.target.value);
+
+    textarea.style.height = "auto";
+    const newHeight = Math.min(textarea.scrollHeight, MAX_TEXTAREA_HEIGHT);
+    textarea.style.height = `${newHeight}px`;
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

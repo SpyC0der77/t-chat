@@ -16,7 +16,9 @@ import {
   Sparkles,
   Newspaper,
   Code,
-  GraduationCap
+  GraduationCap,
+  Copy,
+  Check,
 } from "lucide-react";
 
 export const icons = {
@@ -38,6 +40,8 @@ export const icons = {
   explore: Newspaper,
   code: Code,
   learn: GraduationCap,
+  copy: Copy,
+  check: Check,
 } as const;
 
 export type IconType = keyof typeof icons;

@@ -6,15 +6,17 @@ import { Id } from "./_generated/dataModel";
 const INITIAL_TITLE = "Nerding Title";
 
 export const createThread = mutation({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    threadId: v.string(),
+  },
+  handler: async (ctx, args) => {
     const now = Date.now();
     const userMetadata = await betterAuthComponent.getAuthUser(ctx);
     if (!userMetadata) {
       return null;
     }
     const userId = userMetadata.userId;
-    const threadId = await ctx.db.insert("threads", {
+    const id = await ctx.db.insert("threads", {
       title: INITIAL_TITLE,
       userId: userId as Id<"users">,
       createdAt: now,
@@ -22,15 +24,18 @@ export const createThread = mutation({
       lastMessageAt: now,
       generationStatus: "pending",
       visibility: "visible",
+      threadId: args.threadId,
     });
-    return threadId;
+    return {
+      id: id,
+      threadId: args.threadId,
+    };
   },
 })
 
 export const updatethread = mutation({
   args: {
     threadid: v.id("threads"),
-    userid: v.id("users"),
     title: v.optional(v.string()),
     status: v.union(
       v.literal("pending"),
@@ -41,8 +46,13 @@ export const updatethread = mutation({
     lastmessageat: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    const userMetadata = await betterAuthComponent.getAuthUser(ctx);
+    if (!userMetadata) {
+      return null;
+    }
+    const userId = userMetadata.userId;
     const thread = await ctx.db.get(args.threadid);
-    if (!thread || thread.userId !== args.userid) {
+    if (!thread || thread.userId !== userId) {
       throw new Error("Unauthorized or thread not found");
     }
 

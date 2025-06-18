@@ -2,6 +2,7 @@ import { Route, BrowserRouter, Routes, Navigate } from 'react-router';
 import Auth from '@/frontend/auth';
 import ProtectedRoute from '@/components/protected';
 import Home from '@/frontend/home';
+import Chat from '@/frontend/chat';
 import { useCustomAuth } from '@/hooks/use-custom-auth';
 import ChatProvider from '@/frontend/chat/components/chat-provider';
 
@@ -19,7 +20,7 @@ export default function App() {
         </Route>
         <Route element={<ChatProvider />}>
           <Route path="/" element={<Home />} />
-          <Route path="/chat/:id" element={<h1>Chat Page - Hello World</h1>} />
+          <Route path="/chat/:id" element={<Chat />} />
           <Route path="/chat" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
