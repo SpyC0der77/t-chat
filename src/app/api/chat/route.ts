@@ -7,6 +7,7 @@ import { api } from '../../../../convex/_generated/api';
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
+export const runtime = 'edge' // 'nodejs' (default) | 'edge'
 async function generateTitle({
   messages,
   threadId,
