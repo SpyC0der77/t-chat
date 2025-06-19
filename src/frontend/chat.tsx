@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import ChatPrompt from "@/frontend/chat/components/chat-prompt"
 import { cn } from "@/lib/utils";
 import { useQuery, useMutation } from "convex/react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { api } from "../../convex/_generated/api";
 import { useChat } from "@ai-sdk/react";
@@ -17,11 +17,11 @@ export default function ChatContent() {
   const { model } = useChatAI();
   const user = useQuery(api.auth.getCurrentUser);
   const createMessage = useMutation(api.message.createMessage);
+  const chatContainerRef = useRef<HTMLDivElement>(null)
   const dbMessages = useQuery(
     api.message.getMessageByThreadId,
     id ? { threadId: id } : 'skip',
   ) || [];
-
 
   const initialMessages = useMemo(
     () =>
@@ -70,16 +70,18 @@ export default function ChatContent() {
         <SettingNavSvg className="z-20 h-16 w-20" />
         <SettingNav />
         <div role='log' aria-label='Chat messages' araia-live='polite' className="mx-auto flex w-full max-w-3xl flex-col space-y-12 px-4 py-10">
-          {messages.map(message => (
-            <Message
-              key={message.id}
-              message={message.content}
-              messageId={message.id}
-              role={message.role as Role}
-              //@ts-ignore
-              model={message?.modal! || ""}
-            />
-          ))}
+          {messages.map(message => {
+            return (
+              <Message
+                key={message.id}
+                message={message.content}
+                messageId={message.id}
+                role={message.role as Role}
+                //@ts-ignore
+                model={message?.modal! || ""}
+              />
+            )
+          })}
         </div>
       </div>
     </>

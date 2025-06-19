@@ -1,7 +1,30 @@
 import { Button } from "@/components/ui/button"
-import { Link } from "react-router"
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router"
 
 export function LogoWithNewChat() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (
+        (event.metaKey || event.ctrlKey) &&
+        event.shiftKey &&
+        event.key === "o"
+      ) {
+        event.preventDefault();
+        navigate("/");
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyPress, { signal });
+
+    return () => {
+      controller.abort();
+    };
+  }, [navigate]);
+
   return (
     <>
       <Logo />

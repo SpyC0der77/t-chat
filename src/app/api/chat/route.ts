@@ -1,12 +1,43 @@
 import { google } from '@ai-sdk/google';
 import { openai } from '@ai-sdk/openai';
-import { smoothStream, streamText } from 'ai';
+import { generateText, smoothStream, streamText } from 'ai';
 import { fetchMutation } from "convex/nextjs";
 import { api } from '../../../../convex/_generated/api';
-import { env } from "@/env"
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
+
+async function generateTitle({
+  messages,
+  threadId,
+  userId,
+  updatedAt,
+}: {
+  messages: string,
+  threadId: string,
+  userId: string,
+  updatedAt: number,
+}) {
+  const { text } = await generateText({
+    model: google('gemini-2.0-flash'),
+    system: `You are an AI assistant specialized in generating concise, descriptive, and engaging titles for chat messages. Your task is to extract the main theme or topic from the user's chat history and provide a single, natural-language title that accurately reflects the conversation.
+
+**IMPORTANT OUTPUT INSTRUCTIONS:**
+1.  **Strictly plain text:** The title must be a single string of plain text.
+2.  **No formatting:** Do NOT use any special characters like asterisks (*), hyphens (-), newlines (\\n), bullet points, or quotation marks (").
+3.  **Concise:** Keep the title brief, ideally between 3-7 words.
+4.  **Descriptive:** The title should clearly indicate the chat's content.
+5.  **Direct Output:** Provide ONLY the title. Do not add any introductory phrases (e.g., "The title is:") or concluding remarks.`,
+    prompt: `Write a title for the thread with the following messages: ${messages}`,
+  });
+  await fetchMutation(api.thread.updatethread, {
+    threadId,
+    userId,
+    title: text,
+    lastmessageat: updatedAt,
+    status: "completed",
+  });
+}
 
 export async function POST(req: Request) {
   try {
@@ -45,7 +76,6 @@ export async function POST(req: Request) {
       experimental_continueSteps: true,
       experimental_transform: smoothStream(),
       onChunk: async ({ chunk }) => {
-        console.log("chunk", chunk);
         if (chunk.type === 'text-delta') {
           accumulatedContent += chunk.textDelta;
           if (Date.now() - lastUpdate > 500) {
@@ -58,20 +88,17 @@ export async function POST(req: Request) {
           }
         }
       },
-      onFinish: async ({ response }) => {
-        await fetchMutation(api.message.updateMessage, {
+      onFinish: async ({ text }) => {
+        const updatedAt = await fetchMutation(api.message.updateMessage, {
           messageId: assistantMessageId!,
           content: accumulatedContent,
           status: "done",
         });
-        fetch(`${env.NEXT_PUBLIC_APP_URL}/api/title`, {
-          method: 'POST',
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            messages: response.messages,
-            threadId,
-            userId
-          })
+        generateTitle({
+          messages: text,
+          threadId,
+          userId,
+          updatedAt
         });
       },
     });

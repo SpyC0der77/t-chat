@@ -60,8 +60,8 @@ export const makeThreadPinned = mutation({
 
 export const updatethread = mutation({
   args: {
-    threadid: v.string(),
-    userId: v.optional(v.id("users")),
+    threadId: v.string(),
+    userId: v.string(),
     title: v.optional(v.string()),
     status: v.union(
       v.literal("pending"),
@@ -72,19 +72,20 @@ export const updatethread = mutation({
     lastmessageat: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const userMetadata = await betterAuthComponent.getAuthUser(ctx);
-    if (!userMetadata && !args.userId) {
-      return null;
-    }
-    const userId = userMetadata ? userMetadata.userId : args.userId;
-    const threads = await ctx.db
+    const userId = args.userId;
+    const thread = await ctx.db
       .query("threads")
-      .withIndex("by_threadId", (q) => q.eq("threadId", args.threadid))
+      .withIndex("by_threadId_and_userId", (q) =>
+        q.eq("threadId", args.threadId)
+          .eq("userId", userId as Id<"users">)
+      )
       .first();
-    if (!threads) return null;
-    const thread = await ctx.db.get(threads._id);
     if (!thread || thread.userId !== userId) {
       throw new Error("Unauthorized or thread not found");
+    }
+
+    if (thread.generationStatus === "completed") {
+      return null;
     }
 
     const updateFields = Object.fromEntries(
@@ -96,12 +97,12 @@ export const updatethread = mutation({
     );
 
     if (Object.keys(updateFields).length > 0) {
-      await ctx.db.patch(threads._id, {
+      await ctx.db.patch(thread._id, {
         ...updateFields,
         updatedAt: Date.now(), // Update timestamp for any change
       });
     }
-    return await ctx.db.get(threads._id);
+    return true;
   },
 })
 

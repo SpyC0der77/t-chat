@@ -47,11 +47,13 @@ export const updateMessage = mutation({
       .filter((q) => q.eq(q.field("messageId"), messageId))
       .collect();
     if (messages.length === 0) throw new Error("Message not found");
+    const updatedAt = Date.now();
     await ctx.db.patch(messages[0]._id, {
       content,
       status,
-      updatedAt: Date.now(),
+      updatedAt,
     });
+    return updatedAt;
   },
 });
 
