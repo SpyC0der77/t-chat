@@ -5,11 +5,10 @@ import {
   type PublicAuthFunctions,
 } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
-import { betterAuth, BetterAuthPlugin } from "better-auth";
+import { betterAuth } from "better-auth";
 import { api, components, internal } from "./_generated/api";
 import { query, type GenericCtx } from "./_generated/server";
 import type { Id, DataModel } from "./_generated/dataModel";
-import { createAuthMiddleware } from "better-auth/api";
 
 const authFunctions: AuthFunctions = internal.auth;
 const publicAuthFunctions: PublicAuthFunctions = api.auth;

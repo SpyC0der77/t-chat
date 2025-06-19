@@ -1,8 +1,8 @@
 import { Icon } from "@/components/icon";
-import { useCustomAuth } from "@/hooks/use-custom-auth";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { Link } from "react-router";
+import { useCustomAuth } from "@/frontend/chat/contexts/auth";
 
 export function User() {
   const { isAuthenticated: isCustomAuthenticated, session } = useCustomAuth();
@@ -20,6 +20,7 @@ export function User() {
     )
   }
 
+  if (!session) return null;
   return (
     <UserWrapper
       aria-label="Go to settings"

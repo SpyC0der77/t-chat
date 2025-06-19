@@ -1,8 +1,9 @@
 import { Icon } from "@/components/icon";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useNavigate, useSearchParams } from "react-router";
 
-export default function BackButton() {
+export default function BackButton({ className }: React.ComponentProps<"div">) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -16,7 +17,7 @@ export default function BackButton() {
   };
 
   return (
-    <div className="absolute left-4 top-4">
+    <div className={cn("absolute left-4 top-4", className)}>
       <Button
         onClick={handleBackClick}
         variant="ghost"

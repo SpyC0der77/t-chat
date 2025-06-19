@@ -1,6 +1,5 @@
 import { SettingNav, SettingNavSvg } from "@/components/setting-navigation"
 import ChatPrompt, { DRAFT_KEY } from "@/frontend/chat/components/chat-prompt"
-import { useCustomAuth } from "@/hooks/use-custom-auth";
 import { Tabs, TabsContent, TabsList, TabsTrigger, } from "@/components/ui/tabs"
 import { Icon } from "@/components/icon";
 import { IconType } from "@/lib/icons";
@@ -12,6 +11,7 @@ import { api } from "../../convex/_generated/api";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { useChatAI } from "./chat/contexts/model";
+import { useCustomAuth } from "./chat/contexts/auth";
 
 const promptSuggestions: Record<string, { title: string, icon: IconType, prompts: string[] }> = {
   create: {
@@ -115,7 +115,7 @@ export default function ChatContent() {
               )}>
               <h2 className="text-3xl font-semibold">
                 How can I help you
-                {isAuthenticated && (", " + session.name!.split(" ")[0])}
+                {isAuthenticated && (", " + session!.name!.split(" ")[0])}
                 ?
               </h2>
               <Tabs

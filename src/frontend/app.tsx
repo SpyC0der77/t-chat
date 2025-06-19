@@ -3,10 +3,12 @@ import Auth from '@/frontend/auth';
 import ProtectedRoute from '@/components/protected';
 import Home from '@/frontend/home';
 import Chat from '@/frontend/chat';
-import { useCustomAuth } from '@/hooks/use-custom-auth';
+import Setting from '@/frontend/setting';
+import AuthComplete from '@/frontend/auth-complete';
 import ChatProvider from '@/frontend/chat/components/chat-provider';
+import { AuthProvider, useCustomAuth } from '@/frontend/chat/contexts/auth';
 
-export default function App() {
+function AppRoutes() {
   const { isAuthenticated: isCustomAuthenticated } = useCustomAuth();
   return (
     <BrowserRouter>
@@ -14,8 +16,9 @@ export default function App() {
         <Route path="/auth" element={
           isCustomAuthenticated ? <Navigate to="/settings/subscription" replace /> : <Auth />
         } />
+        <Route path="/auth/complete" element={<AuthComplete />} />
         <Route element={<ProtectedRoute />}>
-          <Route path="/settings/subscription" element={<h1>Subscription Page - Hello World</h1>} />
+          <Route path="/settings/subscription" element={<Setting />} />
           <Route path="/settings" element={<Navigate to="/settings/subscription" replace />} />
         </Route>
         <Route element={<ChatProvider />}>
@@ -25,5 +28,13 @@ export default function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
   );
 }

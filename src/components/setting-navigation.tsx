@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Icon } from "@/components/icon"
 import { cn } from "@/lib/utils";
 import { Link } from "react-router";
+import { ToggleTheme } from "@/components/toggle-theme";
 
 export function SettingNavSvg({ className, ...props }: React.ComponentProps<"div">) {
   const { open } = useSidebar();
@@ -54,15 +55,7 @@ export function SettingNav() {
             <span className="sr-only">Settings</span>
           </Link>
         </Button>
-        <Button
-          variant="ghost"
-          tabIndex={-1}
-          className="size-8 p-0 rounded-md"
-        >
-          <Icon name="moon" className="absolute size-4 rotate-0 scale-100 transition-all duration-200 dark:-rotate-90 dark:scale-0" />
-          <Icon name="sun" className="absolute size-4 rotate-90 scale-0 transition-all duration-200 dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
+        <ToggleTheme />
       </div>
     </div>
   )
