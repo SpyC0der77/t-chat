@@ -72,6 +72,7 @@ export const updatethread = mutation({
     lastmessageat: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    console.log("updateThread", args);
     const userId = args.userId;
     const thread = await ctx.db
       .query("threads")

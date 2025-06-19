@@ -18,6 +18,7 @@ async function generateTitle({
   userId: string,
   updatedAt: number,
 }) {
+  console.log("generateTitle", messages, threadId, userId, updatedAt);
   const { text } = await generateText({
     model: google('gemini-2.0-flash'),
     system: `You are an AI assistant specialized in generating concise, descriptive, and engaging titles for chat messages. Your task is to extract the main theme or topic from the user's chat history and provide a single, natural-language title that accurately reflects the conversation.
@@ -37,6 +38,7 @@ async function generateTitle({
     lastmessageat: updatedAt,
     status: "completed",
   });
+  console.log("title", text);
 }
 
 export async function POST(req: Request) {
