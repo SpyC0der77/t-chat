@@ -18,10 +18,10 @@ async function generateTitle({
   userId: string,
   updatedAt: number,
 }) {
-  console.log("generateTitle", messages, threadId, userId, updatedAt);
-  const { text } = await generateText({
-    model: google('gemini-2.0-flash'),
-    system: `You are an AI assistant specialized in generating concise, descriptive, and engaging titles for chat messages. Your task is to extract the main theme or topic from the user's chat history and provide a single, natural-language title that accurately reflects the conversation.
+  try {
+    const { text } = await generateText({
+      model: google('gemini-2.0-flash'),
+      system: `You are an AI assistant specialized in generating concise, descriptive, and engaging titles for chat messages. Your task is to extract the main theme or topic from the user's chat history and provide a single, natural-language title that accurately reflects the conversation.
 
 **IMPORTANT OUTPUT INSTRUCTIONS:**
 1.  **Strictly plain text:** The title must be a single string of plain text.
@@ -29,16 +29,20 @@ async function generateTitle({
 3.  **Concise:** Keep the title brief, ideally between 3-7 words.
 4.  **Descriptive:** The title should clearly indicate the chat's content.
 5.  **Direct Output:** Provide ONLY the title. Do not add any introductory phrases (e.g., "The title is:") or concluding remarks.`,
-    prompt: `Write a title for the thread with the following messages: ${messages}`,
-  });
-  await fetchMutation(api.thread.updatethread, {
-    threadId,
-    userId,
-    title: text,
-    lastmessageat: updatedAt,
-    status: "completed",
-  });
-  console.log("title", text);
+      prompt: `Write a title for the thread with the following messages: ${messages}`,
+    });
+    console.log("generateTitle", text);
+    await fetchMutation(api.thread.updatethread, {
+      threadId,
+      userId,
+      title: text,
+      lastmessageat: updatedAt,
+      status: "completed",
+    });
+    console.log("title", text);
+  } catch (e) {
+    console.log(JSON.stringify(e));
+  }
 }
 
 export async function POST(req: Request) {
