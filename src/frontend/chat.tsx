@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import ChatPrompt from "@/frontend/chat/components/chat-prompt"
 import { cn } from "@/lib/utils";
 import { useQuery, useMutation } from "convex/react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { api } from "../../convex/_generated/api";
 import { useChat } from "@ai-sdk/react";
@@ -59,6 +59,14 @@ export default function ChatContent() {
     }
   };
 
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages]);
   return (
     <>
       <ChatPrompt
@@ -66,7 +74,7 @@ export default function ChatContent() {
         setInput={setInput}
         append={handleAppend}
       />
-      <div className="absolute inset-0 overflow-y-scroll sm:pt-3.5 pb-[144px]" style={{ scrollbarGutter: "stable both-edges" }}>
+      <div ref={chatContainerRef} className="absolute inset-0 overflow-y-scroll sm:pt-3.5 pb-[144px]" style={{ scrollbarGutter: "stable both-edges" }}>
         <SettingNavSvg className="z-20 h-16 w-20" />
         <SettingNav />
         <div role='log' aria-label='Chat messages' araia-live='polite' className="mx-auto flex w-full max-w-3xl flex-col space-y-12 px-4 py-10">

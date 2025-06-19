@@ -8,6 +8,9 @@ export default function ThreadAction({ threadId, pinned }: { threadId: string; p
   const makeThreadPinned = useMutation(api.thread.makeThreadPinned);
   const deleteThread = useMutation(api.thread.deleteThread);
 
+  if (!session) {
+    return null
+  }
   const handlePinThread = async () => {
     await makeThreadPinned({ threadId, pinned: !pinned, userId: session!.id })
   }
