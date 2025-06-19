@@ -28,11 +28,11 @@ export default defineSchema({
     ),
     visibility: v.union(v.literal("visible"), v.literal("archived")),
   })
+    .index("by_threadId_and_userId", ["threadId", "userId"])
     .index("by_userId", ["userId"])
     .index("by_threadId", ["threadId"])
-    .index("by_threadId_and_userId", ["threadId", "userId"])
-    .index("by_userId_and_pinned", ["userId", "pinned"])
-    .index("by_userId_and_updatedAt", ["userId", "updatedAt"])
+    .index("by_userId_and_pinned_and_visibility", ["userId", "pinned", "visibility"])
+    .index("by_userId_and_visibility_updatedAt", ["userId", "visibility", "updatedAt"])
   ,
   messages: defineTable({
     messageId: v.string(),

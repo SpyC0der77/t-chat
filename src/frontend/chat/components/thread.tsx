@@ -12,19 +12,25 @@ import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible"
 import ThreadAction from "@/frontend/chat/components/thread-action"
 import { useQuery } from "convex/react"
 import { api } from "../../../../convex/_generated/api"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
+import { useCustomAuth } from "../contexts/auth"
+import { useLocalStorage } from "usehooks-ts"
+
+type GenerationStatus = "pending" | "generating" | "completed" | "failed";
+type Visibility = "visible" | "archived";
 
 interface ThreadItem {
   _creationTime: number
   _id: string
   createdAt: number
-  generationStatus: string
+  generationStatus: GenerationStatus
   lastMessageAt: number
   threadId: string
   title: string
   updatedAt: number
   userId: string
-  visibility: string
+  visibility: Visibility
+  pinned: boolean
 }
 
 // Define the type for the grouped conversations
@@ -35,6 +41,7 @@ interface GroupedConversation {
     title: string
     lastMessage?: string // Assuming lastMessage is not always present in your raw data
     timestamp: number
+    pinned: boolean
   }[]
 }
 
@@ -68,11 +75,12 @@ const groupThreadsByPeriod = (
   ).getTime()
 
   const grouped: { [key: string]: GroupedConversation } = {
+    Pinned: { period: "Pinned", conversations: [] },
     Today: { period: "Today", conversations: [] },
     Yesterday: { period: "Yesterday", conversations: [] },
     "Last 7 days": { period: "Last 7 days", conversations: [] },
     "Last month": { period: "Last month", conversations: [] },
-    Older: { period: "Older", conversations: [] }, // Add an "Older" category
+    Older: { period: "Older", conversations: [] },
   }
 
   // Sort threads by creation time in descending order
@@ -86,13 +94,13 @@ const groupThreadsByPeriod = (
     const conversation = {
       id: thread.threadId,
       title: thread.title,
-      // You might want to fetch the actual last message if available,
-      // otherwise, you can leave it out or provide a placeholder.
-      // For now, I'm omitting it as your input data doesn't contain it.
       timestamp: thread.lastMessageAt,
+      pinned: thread.pinned,
     }
 
-    if (threadTimestamp >= today) {
+    if (thread.pinned) {
+      grouped.Pinned.conversations.push(conversation)
+    } else if (threadTimestamp >= today) {
       grouped.Today.conversations.push(conversation)
     } else if (threadTimestamp >= yesterday) {
       grouped.Yesterday.conversations.push(conversation)
@@ -107,6 +115,8 @@ const groupThreadsByPeriod = (
 
   // Filter out empty groups and maintain order
   const orderedGroups: GroupedConversation[] = []
+  if (grouped.Pinned.conversations.length > 0)
+    orderedGroups.push(grouped.Pinned)
   if (grouped.Today.conversations.length > 0)
     orderedGroups.push(grouped.Today)
   if (grouped.Yesterday.conversations.length > 0)
@@ -121,12 +131,24 @@ const groupThreadsByPeriod = (
 }
 
 
+const THREAD_KEY = "threads";
+
 export default function Thread() {
-  const threads = useQuery(api.thread.getThreadsByUser)
-  let groupedConversationHistory: GroupedConversation[] = []
-  if (threads) {
-    groupedConversationHistory = groupThreadsByPeriod(threads)
-  }
+  const { session } = useCustomAuth();
+  const threads = useQuery(api.thread.getThreadsByUser, {
+    userId: session ? session.id : 'skip'
+  });
+  const [savedThreads, setSavedThreads] = useLocalStorage<ThreadItem[]>(THREAD_KEY, []);
+
+
+  useEffect(() => {
+    if (threads) {
+      setSavedThreads(threads);
+    }
+  }, [threads]);
+
+  const groupedConversationHistory = groupThreadsByPeriod(savedThreads)
+
   console.log("grouped threads", groupedConversationHistory)
   return (
     <ThreadWrapper>
@@ -150,25 +172,26 @@ export default function Thread() {
                   {group.conversations.map((conversation) => (
                     <span className="select-none" key={conversation.id}>
                       <SidebarMenuItem>
-                        <Link
+                        <div
                           className="group/link relative flex h-9 w-full items-center overflow-hidden rounded-lg px-2 py-1 text-sm outline-none hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring hover:focus-visible:bg-sidebar-accent"
-                          to={`/chat/${conversation.id}`}
                         >
                           <div className="relative flex w-full items-center">
-                            <input
-                              aria-label="Thread title"
-                              aria-describedby="thread-title-hint"
-                              aria-readonly="true"
-                              tabIndex={-1}
-                              className="hover:truncate-none h-full w-full overflow-hidden rounded bg-transparent px-1 py-1 text-sm text-muted-foreground outline-none pointer-events-none cursor-pointer truncate"
-                              title={conversation.title}
-                              type="text"
-                              readOnly={true}
-                              value={conversation.title}
-                            />
-                            <ThreadAction threadId={conversation.id} />
+                            <Link to={`/chat/${conversation.id}`}>
+                              <input
+                                aria-label="Thread title"
+                                aria-describedby="thread-title-hint"
+                                aria-readonly="true"
+                                tabIndex={-1}
+                                className="hover:truncate-none h-full w-full overflow-hidden rounded bg-transparent px-1 py-1 text-sm text-muted-foreground outline-none pointer-events-none cursor-pointer truncate"
+                                title={conversation.title}
+                                type="text"
+                                readOnly={true}
+                                value={conversation.title}
+                              />
+                            </Link>
+                            <ThreadAction threadId={conversation.id} pinned={conversation.pinned} />
                           </div>
-                        </Link>
+                        </div>
                       </SidebarMenuItem>
                     </span>
                   ))}

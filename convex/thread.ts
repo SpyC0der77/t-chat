@@ -37,24 +37,24 @@ export const makeThreadPinned = mutation({
   args: {
     threadId: v.string(),
     pinned: v.boolean(),
+    userId: v.string(),
   },
   handler: async (ctx, args) => {
-    const userMetadata = await betterAuthComponent.getAuthUser(ctx);
-    if (!userMetadata) {
-      return null;
-    }
-    const userId = userMetadata.userId;
+    const userId = args.userId;
     const thread = await ctx.db
       .query("threads")
-      .withIndex("by_threadId", (q) => q.eq("threadId", args.threadId))
+      .withIndex("by_threadId_and_userId", (q) =>
+        q.eq("threadId", args.threadId)
+          .eq("userId", userId as Id<"users">)
+      )
       .first();
     if (!thread) return null;
 
     await ctx.db.patch(thread._id, {
-      pinned: true,
+      pinned: args.pinned,
       updatedAt: Date.now(),
     });
-    return await ctx.db.get(thread._id);
+    return true;
   },
 });
 
@@ -107,40 +107,50 @@ export const updatethread = mutation({
 
 export const deleteThread = mutation({
   args: {
-    threadid: v.id("threads"),
-    userid: v.id("users"),
+    threadId: v.string(),
+    userId: v.string(),
   },
   handler: async (ctx, args) => {
-    const thread = await ctx.db.get(args.threadid);
-    if (!thread || thread.userId !== args.userid) {
-      throw new Error("Unauthorized or thread not found");
-    }
+    const userId = args.userId;
+    const thread = await ctx.db
+      .query("threads")
+      .withIndex("by_threadId_and_userId", (q) =>
+        q.eq("threadId", args.threadId)
+          .eq("userId", userId as Id<"users">)
+      )
+      .first();
+    if (!thread) return null;
 
-    await ctx.db.patch(args.threadid, {
+    await ctx.db.patch(thread._id, {
       visibility: "archived",
       updatedAt: Date.now(),
     });
-    return await ctx.db.get(args.threadid);
+    return true;
   },
 });
 
 export const getThreadsByUser = query({
-  args: {},
-  handler: async (ctx) => {
-    const userMetadata = await betterAuthComponent.getAuthUser(ctx);
-    if (!userMetadata) {
-      return null;
-    }
-    const userId = userMetadata.userId;
+  args: {
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = args.userId;
     const threads = await ctx.db
       .query("threads")
-      .withIndex("by_userId_and_updatedAt", (q) => q.eq("userId", userId as Id<"users">))
+      .withIndex("by_userId_and_visibility_updatedAt", (q) =>
+        q.eq("userId", userId as Id<"users">)
+          .eq("visibility", "visible")
+      )
       .order("desc")
       .take(100);
 
     const pinnedThreads = await ctx.db
       .query("threads")
-      .withIndex("by_userId_and_pinned", (q) => q.eq("userId", userId as Id<"users">))
+      .withIndex("by_userId_and_pinned_and_visibility", (q) =>
+        q.eq("userId", userId as Id<"users">)
+          .eq("pinned", true)
+          .eq("visibility", "visible")
+      )
       .order("desc")
       .take(100);
 

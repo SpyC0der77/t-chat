@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const newSessionData: SessionData = {
             id: user.userId,
             name: user.name,
-            picture: user.picture,
+            picture: user.picture || '',
             email: user.email,
           };
           setSession(newSessionData);
