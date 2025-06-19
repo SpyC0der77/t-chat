@@ -8,6 +8,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useChatAI } from "../contexts/model";
+import { useTheme } from "next-themes";
 
 export const DRAFT_KEY = "draft_prompt";
 const MAX_TEXTAREA_HEIGHT = 240;
@@ -35,6 +36,14 @@ export default function ChatPrompt({ input, setInput, append }: ChatPromptProps)
       textareaRef.current.style.height = `${newHeight}px`;
     }
   }, []);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 0);
+    }
+  }, [input]);
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -70,13 +79,14 @@ export default function ChatPrompt({ input, setInput, append }: ChatPromptProps)
     <PromptWrapper>
       <form
         ref={formRef}
-        className="relative flex w-full flex-col items-stretch gap-2 rounded-t-xl border border-b-0 border-white/70 bg-[--chat-input-background] px-3 pt-3 text-secondary-foreground outline-8 outline-[hsl(var(--chat-input-gradient)/0.5)] pb-3 max-sm:pb-6 sm:max-w-3xl dark:border-[hsl(0,0%,83%)]/[0.04] dark:bg-secondary/[0.045] dark:outline-chat-background/40"
+        className="relative flex w-full flex-col items-stretch gap-2 rounded-t-xl border border-b-0 border-white/70 bg-(--chat-input-background) px-3 pt-3 text-secondary-foreground outline-8 outline-chat-input-outline/50  pb-3 max-sm:pb-6 sm:max-w-3xl dark:border-[hsl(0,0%,83%)]/[0.04] dark:bg-secondary/[0.045] dark:outline-chat-background/40"
         style={{ boxShadow: "rgba(0, 0, 0, 0.1) 0px 80px 50px 0px, rgba(0, 0, 0, 0.07) 0px 50px 30px 0px, rgba(0, 0, 0, 0.06) 0px 30px 15px 0px, rgba(0, 0, 0, 0.04) 0px 15px 8px, rgba(0, 0, 0, 0.04) 0px 6px 4px, rgba(0, 0, 0, 0.02) 0px 2px 2px" }}
         onSubmit={submitHandler}
       >
         <div className="flex flex-grow flex-col">
           <div className="flex flex-grow flex-row  items-start">
             <textarea
+              ref={textareaRef}
               name="input"
               id="chat-input"
               placeholder="Type your message here nerd..."
@@ -86,6 +96,7 @@ export default function ChatPrompt({ input, setInput, append }: ChatPromptProps)
               className="w-full resize-none bg-transparent text-base leading-6 text-foreground outline-none placeholder:text-secondary-foreground/60 disabled:opacity-0"
               style={{ height: "48px !important" }}
               value={input || draft || ""}
+              autoFocus={!!input}
               onChange={changeHandler}
               onKeyDown={handleKeyDown}
             />
@@ -110,7 +121,7 @@ const SendButton = () => {
       <Button
         variant="ghost"
         size="icon"
-        className="border-reflect button-reflect bg-[rgb(162,59,103)] font-semibold shadow hover:bg-[#d56698] active:bg-[rgb(162,59,103)] disabled:hover:bg-[rgb(162,59,103)] disabled:active:bg-[rgb(162,59,103)] dark:bg-primary/20 dark:hover:bg-pink-800/70 dark:active:bg-pink-800/40 disabled:dark:hover:bg-primary/20 disabled:dark:active:bg-primary/20 h-9 w-9 relative rounded-lg p-2 text-pink-50"
+        className="border-reflect button-reflect bg-[rgb(162,59,103)] font-semibold shadow hover:bg-[#d56698] active:bg-[rgb(162,59,103)] disabled:hover:bg-[rgb(162,59,103)] disabled:active:bg-[rgb(162,59,103)] dark:bg-primary/20 dark:hover:bg-pink-800/70 dark:active:bg-pink-800/40 disabled:dark:hover:bg-primary/20 disabled:dark:active:bg-primary/20 h-9 w-9 relative rounded-lg p-2 text-pink-50 hover:text-pink-50 disabled:hover:text-pink-50"
         disabled={draft.trim().length === 0}
       >
         <Icon name="send" className="!size-5" />
@@ -177,14 +188,16 @@ const PromptActions = () => {
 }
 
 const PromptWrapper = ({ children }: { children: React.ReactNode }) => {
+  const { theme } = useTheme();
   return (
     <div className="pointer-events-none absolute bottom-0 z-10 w-full px-2">
       <div className="relative mx-auto flex w-full max-w-3xl flex-col text-center">
         <div className="pointer-events-none">
           <div className="pointer-events-auto">
             <div
-              className="border-reflect rounded-t-[20px] bg-(--chat-input-background) p-2 pb-0 backdrop-blur-lg ![--c:--chat-input-gradient]"
+              className="border-reflect rounded-t-[20px] bg-(--chat-input-background) p-2 pb-0 backdrop-blur-lg"
               style={{
+                "--c": theme === "dark" ? "289 23% 23%" : "295 100% 90%",
                 "--gradientBorder-gradient": "linear-gradient(180deg, var(--min), var(--max), var(--min)), linear-gradient(15deg, var(--min) 50%, var(--max))",
                 "--start": "#000000e0",
                 "--opacity": 1

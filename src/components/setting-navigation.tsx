@@ -50,7 +50,7 @@ export function SettingNav() {
             open && "rounded-bl-xl"
           )}
         >
-          <Link to="/settings/customization">
+          <Link to="/settings/subscription">
             <Icon name="settings" className="size-4" />
             <span className="sr-only">Settings</span>
           </Link>

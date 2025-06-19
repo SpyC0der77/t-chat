@@ -3,10 +3,10 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { api } from "../../../../convex/_generated/api";
 
 type SessionData = {
-  id?: string
-  email?: string
-  name?: string
-  picture?: string
+  id: string
+  email: string
+  name: string
+  picture: string
 }
 
 interface AuthContextType {

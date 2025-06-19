@@ -43,6 +43,7 @@
   --color-chat-accent: var(--chat-accent);
   --color-chat-input-gradient: var(--chat-input-gradient);
   --color-chat-input-background: var(--chat-input-background);
+  --color-chat-input-outline: var(--chat-input-outline);
   --color-chat-overlay: var(--chat-overlay);
   --color-wordmark-color: var(--wordmark-color);
   --color-gradient-noise-top: var(--gradient-noise-top);
@@ -78,11 +79,11 @@
   --chart-4: hsl(43, 74%, 66%);
   --chart-5: hsl(27, 87%, 67%);
   --radius: 0.5rem;
-  --sidebar-background: hsl(240, 2.6%, 7.6%);
+  --sidebar-background: hsl(290.3 49.2% 87.6%);
   --sidebar-foreground: hsl(240, 4.8%, 95.9%);
   --sidebar-primary: hsl(224.3, 76.3%, 48%);
   --sidebar-primary-foreground: hsl(0, 0%, 100%);
-  --sidebar-accent: hsl(318.5, 20.6%, 12.4%);
+  --sidebar-accent: hsl(60 5% 97%);
   --sidebar-accent-foreground: hsl(240, 4.8%, 95.9%);
   --sidebar-border: hsl(0, 0%, 0%);
   --sidebar-ring: hsl(333.3, 71.4%, 50.6%);
@@ -93,6 +94,7 @@
   --chat-accent: #f5ecf9;
   --chat-input-gradient: hsl(295, 100%, 90%);
   --chat-input-background: hsla(270, 0%, 100%, var(--blur-fallback, 0.1));
+  --chat-input-outline: hsl(295.29deg 100% 90%);
   --chat-overlay: hsla(309, 63%, 92%, var(--blur-fallback, 0.72));
   --wordmark-color: #ca0277;
   --sidebar: hsl(0 0% 98%);
@@ -138,6 +140,7 @@
   --chat-accent: rgba(25, 21, 30, .86);
   --chat-input-gradient: hsl(289, 23%, 23%);
   --chat-input-background: hsla(270, 10%, 20%, var(--blur-fallback, 0.4));
+  --chat-input-outline: hsl(270, 10%, 20%);
   --chat-overlay: hsla(270, 12%, 16%, var(--blur-fallback, 0.71));
   --wordmark-color: #e3bad1;
   --sidebar: hsl(240 5.9% 10%);
@@ -212,7 +215,7 @@
 
   .border-reflect {
     --c: 320 100% 75%;
-    --min: hsl(320 100% 75% /0.2): hsl(var(--c) / 0.2);
+    --min: hsl(var(--c) / 0.2);
     --max: hsl(var(--c) / 1);
     --gradientBorder-gradient: linear-gradient(180deg, var(--min), var(--max), var(--min)), linear-gradient(15deg, var(--min) 50%, var(--max));
     --opacity: 1;

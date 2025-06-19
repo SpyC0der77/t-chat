@@ -11,8 +11,8 @@ export default function SignOut() {
     await signOut({
       fetchOptions: {
         onSuccess: () => {
-          window.location.pathname = "/";
           logout();
+          window.location.pathname = "/";
         },
       },
     });

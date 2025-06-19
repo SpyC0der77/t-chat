@@ -1,10 +1,10 @@
 import BgGradient from "@/components/bg-gradient";
 import { DotsLoader } from "@/components/ui/dot-loading";
-import { useCustomAuth } from "./chat/contexts/auth";
 import { Navigate } from "react-router";
+import { useConvexAuth } from "convex/react";
 
 export default function Setting() {
-  const { isLoading, isAuthenticated } = useCustomAuth();
+  const { isAuthenticated, isLoading } = useConvexAuth();
   if (isLoading) {
     return (
       <div className="grid place-items-center min-h-screen">
@@ -19,5 +19,4 @@ export default function Setting() {
     )
   }
   return <Navigate to="/" />
-
 }
