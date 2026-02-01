@@ -1,25 +1,39 @@
-import { Route, BrowserRouter, Routes, Navigate } from 'react-router';
-import Auth from '@/frontend/auth';
-import Home from '@/frontend/home';
-import Chat from '@/frontend/chat';
-import AuthComplete from '@/frontend/auth-complete';
-import ChatProvider from '@/frontend/chat/components/chat-provider';
-import { AuthProvider, useCustomAuth } from '@/frontend/chat/contexts/auth';
+import { Route, BrowserRouter, Routes } from "react-router";
+import Home from "@/frontend/home";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AuthProvider } from "@/frontend/chat/contexts/auth";
+import BgGradient from "@/components/bg-gradient";
+import SidebarNav from "@/components/sidebar-navigation";
+import ChatSidebar from "@/frontend/chat/components/chat-sidebar";
+import ChatBackground from "@/frontend/chat/components/chat-background";
+import TopbarDecoration from "@/components/topbar-decoration";
+import { SettingNavSvg } from "@/components/setting-navigation";
+import { AIProvider } from "@/frontend/chat/contexts/model";
 
 function AppRoutes() {
-  const { isAuthenticated: isCustomAuthenticated } = useCustomAuth();
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/auth" element={
-          isCustomAuthenticated ? <Navigate to="/" replace /> : <Auth />
-        } />
-        <Route path="/auth/complete" element={<AuthComplete />} />
-        <Route element={<ChatProvider />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/chat/:id" element={<Chat />} />
-          <Route path="/chat" element={<Navigate to="/" replace />} />
-        </Route>
+        <Route 
+          path="/" 
+          element={
+            <SidebarProvider defaultOpen={true}>
+              <AIProvider>
+                <BgGradient />
+                <ChatSidebar />
+                <SidebarNav />
+                <main className="flex min-h-svh flex-col overflow-hidden w-full relative transistion-[width,height]">
+                  <ChatBackground />
+                  <TopbarDecoration />
+                  <div className="absolute bottom-0 top-0 w-full">
+                    <SettingNavSvg />
+                    <Home />
+                  </div>
+                </main>
+              </AIProvider>
+            </SidebarProvider>
+          } 
+        />
       </Routes>
     </BrowserRouter>
   );
