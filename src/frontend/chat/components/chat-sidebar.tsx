@@ -1,14 +1,12 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { LogoWithNewChat } from "@/components/logo"
 import SearchThread from "@/frontend/chat/components/search-thread"
 import Thread from "@/frontend/chat/components/thread"
-import { User } from "@/frontend/chat/components/user"
 
 
 
@@ -22,9 +20,6 @@ export default function ChatSidebar() {
       <SidebarContent className="small-scrollbar scroll-shadow relative pb-2">
         <Thread />
       </SidebarContent>
-      <SidebarFooter className="m-0 pt-0">
-        <User />
-      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )

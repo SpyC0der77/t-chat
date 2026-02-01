@@ -22,10 +22,14 @@ export function User() {
 
   if (!session) return null;
   return (
-    <UserWrapper
+    <div
+      role="button"
       aria-label="Go to settings"
-      className="justify-between gap-3 px-3 py-3 focus:bg-sidebar-accent focus:outline-2"
-      to="/settings/subscription"
+      className="flex w-full select-none items-center justify-between gap-3 rounded-lg px-3 py-3 focus:bg-sidebar-accent focus:outline-2 hover:bg-sidebar-accent"
+      onClick={(e) => {
+        e.preventDefault();
+        // Settings button does nothing
+      }}
     >
       <div className="flex w-full min-w-0 flex-row items-center gap-3">
         <Image
@@ -43,7 +47,7 @@ export function User() {
           </span>
         </div>
       </div>
-    </UserWrapper>
+    </div>
   )
 }
 

@@ -2,7 +2,6 @@ import { useSidebar } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { Icon } from "@/components/icon"
 import { cn } from "@/lib/utils";
-import { Link } from "react-router";
 import { ToggleTheme } from "@/components/toggle-theme";
 
 export function SettingNavSvg({ className, ...props }: React.ComponentProps<"div">) {
@@ -44,16 +43,17 @@ export function SettingNav() {
           variant="ghost"
           tabIndex={-1}
           aria-label="Go to settings"
-          asChild
           className={cn(
             "size-8 p-0 rounded-md",
             open && "rounded-bl-xl"
           )}
+          onClick={(e) => {
+            e.preventDefault();
+            // Settings button does nothing
+          }}
         >
-          <Link to="/settings/subscription">
-            <Icon name="settings" className="size-4" />
-            <span className="sr-only">Settings</span>
-          </Link>
+          <Icon name="settings" className="size-4" />
+          <span className="sr-only">Settings</span>
         </Button>
         <ToggleTheme />
       </div>
