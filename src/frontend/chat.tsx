@@ -7,7 +7,7 @@ import { useQuery, useMutation } from "@/lib/mock-hooks";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { api } from "@/lib/mock-hooks";
-import { useChat } from "@ai-sdk/react";
+import { useChat } from "@/lib/mock-use-chat";
 import { useChatAI } from "./chat/contexts/model";
 
 type Role = "user" | "assistant";

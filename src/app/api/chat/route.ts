@@ -1,12 +1,12 @@
-import { google } from '@ai-sdk/google';
-import { openai } from '@ai-sdk/openai';
-import { generateText, smoothStream, streamText } from 'ai';
+// Mock API route - returns mock streaming responses for UI demo purposes
 import { api } from '@/lib/mock-hooks';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
 
-export const runtime = 'edge' // 'nodejs' (default) | 'edge'
+export const runtime = 'edge';
+
+// Mock title generation
 async function generateTitle({
   messages,
   threadId,
@@ -18,30 +18,27 @@ async function generateTitle({
   userId: string,
   updatedAt: number,
 }) {
-  try {
-    const { text } = await generateText({
-      model: google('gemini-2.0-flash'),
-      system: `You are an AI assistant specialized in generating concise, descriptive, and engaging titles for chat messages. Your task is to extract the main theme or topic from the user's chat history and provide a single, natural-language title that accurately reflects the conversation.
+  // Mock title generation - extract first few words from user message
+  const userMessage = messages.split('\n').find(line => line.includes('user:'));
+  const title = userMessage 
+    ? userMessage.split(':').slice(1).join(':').trim().split(' ').slice(0, 5).join(' ') || 'New Chat'
+    : 'New Chat';
+  
+  api.thread.updatethread({
+    threadId,
+    userId,
+    title,
+    lastmessageat: updatedAt,
+    status: "completed",
+  });
+}
 
-**IMPORTANT OUTPUT INSTRUCTIONS:**
-1.  **Strictly plain text:** The title must be a single string of plain text.
-2.  **No formatting:** Do NOT use any special characters like asterisks (*), hyphens (-), newlines (\\n), bullet points, or quotation marks (").
-3.  **Concise:** Keep the title brief, ideally between 3-7 words.
-4.  **Descriptive:** The title should clearly indicate the chat's content.
-5.  **Direct Output:** Provide ONLY the title. Do not add any introductory phrases (e.g., "The title is:") or concluding remarks.`,
-      prompt: `Write a title for the thread with the following messages: ${messages}`,
-    });
-    console.log("generateTitle", text);
-    api.thread.updatethread({
-      threadId,
-      userId,
-      title: text,
-      lastmessageat: updatedAt,
-      status: "completed",
-    });
-    console.log("title", text);
-  } catch (e) {
-    console.log(JSON.stringify(e));
+// Mock streaming response generator
+async function* generateMockStream(text: string): AsyncGenerator<string> {
+  const words = text.split(' ');
+  for (let i = 0; i < words.length; i++) {
+    await new Promise(resolve => setTimeout(resolve, 50));
+    yield (i === 0 ? '' : ' ') + words[i];
   }
 }
 
@@ -58,58 +55,70 @@ export async function POST(req: Request) {
       modal: modal,
     });
 
-    console.log("assistantMessageId", assistantMessageId);
-    let accumulatedContent = "";
-    let lastUpdate = Date.now();
+    // Generate mock response based on user message
+    const lastUserMessage = messages
+      .filter((m: any) => m.role === 'user')
+      .pop()?.content || '';
+    
+    const mockResponses = [
+      "That's an interesting question! Let me think about that...",
+      "I understand what you're asking. Here's my perspective on this topic.",
+      "Great question! Based on what you've shared, I'd say that this is a complex topic with many facets.",
+      "Thanks for asking! This is something I can help you explore further.",
+      "I appreciate you bringing this up. Let me provide some insights on this matter.",
+    ];
+    const mockResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)];
 
-
-    const modelRegistry = {
-      "gpt-4": { provider: "openai", modelId: "gpt-4" },
-      "gpt-4o": { provider: "openai", modelId: "gpt-4o" },
-      "gpt-3.5-turbo": { provider: "openai", modelId: "gpt-3.5-turbo" },
-      "gemini-2.0": { provider: "google", modelId: "gemini-2.0-flash" },
-      "gemini-2.5": { provider: "google", modelId: "gemini-2.5-pro-preview-05-06" },
-    };
-    //@ts-ignore
-    const model = modelRegistry[modal];
-    const result = streamText({
-      //model: google('gemini-2.0-flash'),
-      model: model.provider === 'google' ? google(model.modelId) : openai(model.modelId),
-      //model: google('gemini-2.5-pro-preview-05-06'),
-      maxRetries: 5,
-      messages,
-      maxSteps: 5,
-      experimental_continueSteps: true,
-      experimental_transform: smoothStream(),
-      onChunk: async ({ chunk }) => {
-        if (chunk.type === 'text-delta') {
-          accumulatedContent += chunk.textDelta;
-          if (Date.now() - lastUpdate > 500) {
+    // Create a mock streaming response
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream({
+      async start(controller) {
+        let accumulatedContent = "";
+        
+        // Send initial thinking status
+        controller.enqueue(encoder.encode(`0:"${JSON.stringify({ type: 'text-delta', textDelta: '' })}"\n`));
+        
+        // Stream the response word by word
+        for await (const chunk of generateMockStream(mockResponse)) {
+          accumulatedContent += chunk;
+          const data = JSON.stringify({ type: 'text-delta', textDelta: chunk });
+          controller.enqueue(encoder.encode(`0:"${data}"\n`));
+          
+          // Update message periodically
+          if (accumulatedContent.length % 20 === 0) {
             api.message.updateMessage({
               messageId: assistantMessageId!,
               content: accumulatedContent,
               status: "streaming",
             });
-            lastUpdate = Date.now();
           }
         }
-      },
-      onFinish: async ({ text }) => {
+
+        // Final update
         const updatedAt = api.message.updateMessage({
           messageId: assistantMessageId!,
           content: accumulatedContent,
           status: "done",
         });
+
+        // Generate title
         generateTitle({
-          messages: text,
+          messages: lastUserMessage,
           threadId,
           userId,
           updatedAt
         });
+
+        controller.close();
       },
     });
 
-    return result.toDataStreamResponse();
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'X-Vercel-AI-Data-Stream': 'v1',
+      },
+    });
   } catch (e) {
     console.log(e);
     return new Response('Internal Server Error', {

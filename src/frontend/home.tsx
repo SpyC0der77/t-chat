@@ -5,7 +5,7 @@ import { Icon } from "@/components/icon";
 import { IconType } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 import { useLocalStorage } from "usehooks-ts";
-import { useChat } from "@ai-sdk/react";
+import { useChat } from "@/lib/mock-use-chat";
 import { useMutation, useQuery } from "@/lib/mock-hooks";
 import { api } from "@/lib/mock-hooks";
 import { useNavigate } from "react-router";

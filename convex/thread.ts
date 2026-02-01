@@ -28,10 +28,10 @@ export const createThread = mutation({
     });
     return {
       id: id,
-      threadId
+      threadId,
     };
   },
-})
+});
 
 export const makeThreadPinned = mutation({
   args: {
@@ -44,8 +44,7 @@ export const makeThreadPinned = mutation({
     const thread = await ctx.db
       .query("threads")
       .withIndex("by_threadId_and_userId", (q) =>
-        q.eq("threadId", args.threadId)
-          .eq("userId", userId as Id<"users">)
+        q.eq("threadId", args.threadId).eq("userId", userId as Id<"users">)
       )
       .first();
     if (!thread) return null;
@@ -77,8 +76,7 @@ export const updatethread = mutation({
     const thread = await ctx.db
       .query("threads")
       .withIndex("by_threadId_and_userId", (q) =>
-        q.eq("threadId", args.threadId)
-          .eq("userId", userId as Id<"users">)
+        q.eq("threadId", args.threadId).eq("userId", userId as Id<"users">)
       )
       .first();
     if (!thread || thread.userId !== userId) {
@@ -105,7 +103,7 @@ export const updatethread = mutation({
     }
     return true;
   },
-})
+});
 
 export const deleteThread = mutation({
   args: {
@@ -117,8 +115,7 @@ export const deleteThread = mutation({
     const thread = await ctx.db
       .query("threads")
       .withIndex("by_threadId_and_userId", (q) =>
-        q.eq("threadId", args.threadId)
-          .eq("userId", userId as Id<"users">)
+        q.eq("threadId", args.threadId).eq("userId", userId as Id<"users">)
       )
       .first();
     if (!thread) return null;
@@ -140,8 +137,7 @@ export const getThreadsByUser = query({
     const threads = await ctx.db
       .query("threads")
       .withIndex("by_userId_and_visibility_updatedAt", (q) =>
-        q.eq("userId", userId as Id<"users">)
-          .eq("visibility", "visible")
+        q.eq("userId", userId as Id<"users">).eq("visibility", "visible")
       )
       .order("desc")
       .take(100);
@@ -149,7 +145,8 @@ export const getThreadsByUser = query({
     const pinnedThreads = await ctx.db
       .query("threads")
       .withIndex("by_userId_and_pinned_and_visibility", (q) =>
-        q.eq("userId", userId as Id<"users">)
+        q
+          .eq("userId", userId as Id<"users">)
           .eq("pinned", true)
           .eq("visibility", "visible")
       )
@@ -159,8 +156,9 @@ export const getThreadsByUser = query({
     const decoupledThreads = [...pinnedThreads, ...threads]
       .filter(
         (t, idx, self) =>
-          idx === self.findIndex((t2) => t2.threadId === t.threadId),
-      ).sort((a, b) => b.updatedAt - a.updatedAt);
+          idx === self.findIndex((t2) => t2.threadId === t.threadId)
+      )
+      .sort((a, b) => b.updatedAt - a.updatedAt);
 
     return decoupledThreads;
   },

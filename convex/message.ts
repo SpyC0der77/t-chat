@@ -29,7 +29,7 @@ export const createMessage = mutation({
       role: args.role,
       createdAt: now,
       updatedAt: now,
-      modal: args.modal || '',
+      modal: args.modal || "",
     });
     return messageId;
   },
@@ -69,13 +69,14 @@ export const getMessageByThreadId = query({
     const userId = userMetadata.userId;
     const messages = await ctx.db
       .query("messages")
-      .filter((q) => q.and(
-        q.eq(q.field("threadId"), args.threadId),
-        q.eq(q.field("userId"), userId)
-      ))
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("threadId"), args.threadId),
+          q.eq(q.field("userId"), userId)
+        )
+      )
       .order("asc")
       .collect();
     return messages;
   },
 });
-
