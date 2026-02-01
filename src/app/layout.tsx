@@ -22,6 +22,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${montserrat.variable} antialiased selection:bg-primary selection:text-white [font-feature-settings:'ss05'_on]`}
+        suppressHydrationWarning
       >
         <Provider>
           {children}

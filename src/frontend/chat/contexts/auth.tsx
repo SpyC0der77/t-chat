@@ -1,5 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { api, useConvex, useConvexAuth } from "@/lib/mock-hooks";
+import { createContext, useCallback, useContext, useState } from "react";
 
 type SessionData = {
   id: string
@@ -21,7 +20,7 @@ const AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const AuthContext = createContext<AuthContextType>({
   session: null,
   isAuthenticated: false,
-  isLoading: true,
+  isLoading: false,
   logout: () => { }
 });
 
@@ -62,50 +61,13 @@ function setAuthCookie(sessionData: SessionData | null) {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<SessionData | null>(() => readCookie(AUTH_COOKIE_NAME));
   const isAuthenticated = !!session?.id;
-  const { isAuthenticated: isConvexAuth, isLoading } = useConvexAuth();
-  const convex = useConvex();
+  const isLoading = false;
 
-  useEffect(() => {
-    if (isLoading) return;
-
-    async function getUser() {
-      try {
-        const user = api.auth.getCurrentUser();
-        if (user) {
-          const newSessionData: SessionData = {
-            id: user.userId,
-            name: user.name,
-            picture: user.picture || '',
-            email: user.email,
-          };
-          setSession(newSessionData);
-          setAuthCookie(newSessionData);
-        } else {
-          setSession(null);
-          setAuthCookie(null);
-        }
-      }
-      catch (error) {
-        console.error("Error fetching user:", error);
-        setSession(null);
-        setAuthCookie(null);
-      }
-    }
-
-    if (isConvexAuth) {
-      getUser();
-    }
-    else {
-      setSession(null);
-      setAuthCookie(null);
-    }
-
-  }, [isConvexAuth, isLoading]);
-  const logout = useCallback(() => { // Example logout function
+  const logout = useCallback(() => {
     setSession(null);
     setAuthCookie(null);
-    // Potentially call Convex logout here too
   }, [])
+
   return (
     <AuthContext.Provider value={{
       session,
