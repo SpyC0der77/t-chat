@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router"
+import { Link, useNavigate } from "react-router";
 
 export function LogoWithNewChat() {
   const navigate = useNavigate();
@@ -29,33 +29,64 @@ export function LogoWithNewChat() {
     <>
       <Logo />
       <div className="px-1">
-        <Button asChild className="w-full select-none bg-[rgb(162,59,103)] font-semibold border-reflect button-reflect focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:bg-[#d56698] active:bg-[rgb(162,59,103)] disabled:hover:bg-[rgb(162,59,103)] disabled:active:bg-[rgb(162,59,103)] dark:bg-primary/20 dark:hover:bg-pink-800/70 dark:active:bg-pink-800/40 disabled:dark:hover:bg-primary/20 disabled:dark:active:bg-primary/20">
-          <Link to="/" >
+        <Button
+          asChild
+          className="w-full select-none bg-[rgb(162,59,103)] font-semibold border-reflect button-reflect focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:bg-[#d56698] active:bg-[rgb(162,59,103)] disabled:hover:bg-[rgb(162,59,103)] disabled:active:bg-[rgb(162,59,103)] dark:bg-primary/20 dark:hover:bg-pink-800/70 dark:active:bg-pink-800/40 disabled:dark:hover:bg-primary/20 disabled:dark:active:bg-primary/20"
+        >
+          <Link to="/">
             <span className="w-full select-none text-center">New Chat</span>
           </Link>
         </Button>
       </div>
     </>
-  )
+  );
 }
 
 export function Logo() {
   return (
     <h1 className="flex h-8 shrink-0 items-center justify-center text-lg text-muted-foreground transition-opacity delay-75 duration-75">
-      <Link className="relative flex h-8 w-24 items-center justify-center text-sm font-semibold text-foreground" to="/" data-discover="true">
+      <Link
+        className="relative flex h-8 w-24 items-center justify-center text-sm font-semibold text-foreground"
+        to="/"
+        data-discover="true"
+      >
         <div className="h-3.5 select-none">
-          <svg width="248" height="53" viewBox="0 0 248 53" fill="none" xmlns="http://www.w3.org/2000/svg" className="size-full text-(--wordmark-color)">
-            <path d="M205.6 50.3C207.5 49.3 209.1 48.1 210.3 46.7V51.1V51.5H210.7H218.4H218.8V51.1V13.5V13.1H218.4H210.7H210.3V13.5V17.8C209.1 16.4 207.5 15.2 205.7 14.3C203.5 13.1 200.9 12.5 197.9 12.5C194.6 12.5 191.6 13.3 188.9 15C186.2 16.7 184 19 182.5 21.9C180.9 24.9 180.1 28.3 180.1 32.1C180.1 35.9 180.9 39.4 182.5 42.4C184.1 45.4 186.2 47.8 188.9 49.5C191.6 51.2 194.6 52.1 197.8 52.1C200.6 52.1 203.3 51.5 205.6 50.3ZM208.7 25.7L209 26.2C209.8 27.9 210.2 29.9 210.2 32.2C210.2 34.7 209.7 36.9 208.7 38.8C207.7 40.7 206.3 42.1 204.7 43C203.1 44 201.3 44.5 199.4 44.5C197.5 44.5 195.8 44 194.1 43C192.4 42 191.1 40.6 190.1 38.7C189.1 36.8 188.6 34.6 188.6 32.1C188.6 29.6 189.1 27.4 190.1 25.6C191.1 23.8 192.4 22.4 194.1 21.5C195.7 20.5 197.5 20.1 199.4 20.1C201.3 20.1 203.1 20.6 204.7 21.5C206.4 22.5 207.7 23.9 208.7 25.7Z" fill="currentcolor" />
-            <path d="M99.6 21.4L99.3 21.9C97.7 24.9 96.9 28.4 96.9 32.3C96.9 36.2 97.7 39.7 99.3 42.7C100.9 45.7 103.1 48 105.9 49.7C108.7 51.4 111.9 52.2 115.5 52.2C120 52.2 123.7 51 126.8 48.7C129.8 46.4 131.9 43.3 133 39.4L133.1 38.9H132.6H124.3H124L123.9 39.2C123.2 41.1 122.2 42.5 120.8 43.5C119.4 44.4 117.7 44.9 115.5 44.9C112.5 44.9 110.1 43.8 108.3 41.6C106.5 39.4 105.6 36.3 105.6 32.3C105.6 28.3 106.5 25.3 108.3 23.1C110.1 20.9 112.5 19.9 115.5 19.9C117.7 19.9 119.4 20.4 120.8 21.4C122.2 22.4 123.2 23.8 123.9 25.6L124 25.9H124.3H132.6H133.1L133 25.4C132 21.3 129.9 18.1 126.9 15.9C123.9 13.7 120.1 12.6 115.5 12.6C111.9 12.6 108.7 13.4 105.9 15.1C103.2 16.4 101.1 18.6 99.6 21.4Z" fill="currentcolor" />
-            <path d="M237.8 13.2V3.90002H229.1V13.2H224.8V20.5H229.1V52.1L230 51.2L232 49.2L237.8 43.2V20.5H246.8V13.2H237.8Z" fill="currentcolor" />
-            <path d="M166.8 14.5L166.7 14.4C164.4 13.1 161.8 12.5 159 12.5C156.6 12.5 154.4 13 152.3 13.8C150.7 14.5 149.3 15.5 148.1 16.6V0.0999756L139.5 8.89997V51.6H148.1V30.1C148.1 26.9 148.9 24.4 150.5 22.8C152.1 21.1 154.2 20.3 156.9 20.3C159.6 20.3 161.7 21.1 163.3 22.8C164.9 24.5 165.6 27 165.6 30.2V51.6H174.1V29C174.1 25.5 173.5 22.6 172.2 20.1C170.8 17.6 169 15.7 166.8 14.5Z" fill="currentcolor" />
-            <path d="M43 3.40002H0V3.90002V7.10002V10.8H3.5H15.4V51.6H24V10.7H35.8L43 3.40002Z" fill="currentcolor" />
+          <svg
+            width="248"
+            height="53"
+            viewBox="0 0 248 53"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="size-full text-(--wordmark-color)"
+          >
+            <path
+              d="M205.6 50.3C207.5 49.3 209.1 48.1 210.3 46.7V51.1V51.5H210.7H218.4H218.8V51.1V13.5V13.1H218.4H210.7H210.3V13.5V17.8C209.1 16.4 207.5 15.2 205.7 14.3C203.5 13.1 200.9 12.5 197.9 12.5C194.6 12.5 191.6 13.3 188.9 15C186.2 16.7 184 19 182.5 21.9C180.9 24.9 180.1 28.3 180.1 32.1C180.1 35.9 180.9 39.4 182.5 42.4C184.1 45.4 186.2 47.8 188.9 49.5C191.6 51.2 194.6 52.1 197.8 52.1C200.6 52.1 203.3 51.5 205.6 50.3ZM208.7 25.7L209 26.2C209.8 27.9 210.2 29.9 210.2 32.2C210.2 34.7 209.7 36.9 208.7 38.8C207.7 40.7 206.3 42.1 204.7 43C203.1 44 201.3 44.5 199.4 44.5C197.5 44.5 195.8 44 194.1 43C192.4 42 191.1 40.6 190.1 38.7C189.1 36.8 188.6 34.6 188.6 32.1C188.6 29.6 189.1 27.4 190.1 25.6C191.1 23.8 192.4 22.4 194.1 21.5C195.7 20.5 197.5 20.1 199.4 20.1C201.3 20.1 203.1 20.6 204.7 21.5C206.4 22.5 207.7 23.9 208.7 25.7Z"
+              fill="currentcolor"
+            />
+            <path
+              d="M99.6 21.4L99.3 21.9C97.7 24.9 96.9 28.4 96.9 32.3C96.9 36.2 97.7 39.7 99.3 42.7C100.9 45.7 103.1 48 105.9 49.7C108.7 51.4 111.9 52.2 115.5 52.2C120 52.2 123.7 51 126.8 48.7C129.8 46.4 131.9 43.3 133 39.4L133.1 38.9H132.6H124.3H124L123.9 39.2C123.2 41.1 122.2 42.5 120.8 43.5C119.4 44.4 117.7 44.9 115.5 44.9C112.5 44.9 110.1 43.8 108.3 41.6C106.5 39.4 105.6 36.3 105.6 32.3C105.6 28.3 106.5 25.3 108.3 23.1C110.1 20.9 112.5 19.9 115.5 19.9C117.7 19.9 119.4 20.4 120.8 21.4C122.2 22.4 123.2 23.8 123.9 25.6L124 25.9H124.3H132.6H133.1L133 25.4C132 21.3 129.9 18.1 126.9 15.9C123.9 13.7 120.1 12.6 115.5 12.6C111.9 12.6 108.7 13.4 105.9 15.1C103.2 16.4 101.1 18.6 99.6 21.4Z"
+              fill="currentcolor"
+            />
+            <path
+              d="M237.8 13.2V3.90002H229.1V13.2H224.8V20.5H229.1V52.1L230 51.2L232 49.2L237.8 43.2V20.5H246.8V13.2H237.8Z"
+              fill="currentcolor"
+            />
+            <path
+              d="M166.8 14.5L166.7 14.4C164.4 13.1 161.8 12.5 159 12.5C156.6 12.5 154.4 13 152.3 13.8C150.7 14.5 149.3 15.5 148.1 16.6V0.0999756L139.5 8.89997V51.6H148.1V30.1C148.1 26.9 148.9 24.4 150.5 22.8C152.1 21.1 154.2 20.3 156.9 20.3C159.6 20.3 161.7 21.1 163.3 22.8C164.9 24.5 165.6 27 165.6 30.2V51.6H174.1V29C174.1 25.5 173.5 22.6 172.2 20.1C170.8 17.6 169 15.7 166.8 14.5Z"
+              fill="currentcolor"
+            />
+            <path
+              d="M43 3.40002H0V3.90002V7.10002V10.8H3.5H15.4V51.6H24V10.7H35.8L43 3.40002Z"
+              fill="currentcolor"
+            />
             <path d="M91.2 44.2H84.3V51.0999H91.2V44.2Z" fill="currentcolor" />
-            <path d="M71.9459 34.1106H77V40.2978H71.9459V51.5H63.9382V3.5H71.9459V34.1106ZM43 40.2978V34.1106L61.2471 7.40773V16.7212L50.0232 34.1106H61.2471V40.2978H43Z" fill="currentcolor" />
+            <path
+              d="M71.9459 34.1106H77V40.2978H71.9459V51.5H63.9382V3.5H71.9459V34.1106ZM43 40.2978V34.1106L61.2471 7.40773V16.7212L50.0232 34.1106H61.2471V40.2978H43Z"
+              fill="currentcolor"
+            />
           </svg>
-
         </div>
       </Link>
     </h1>
-  )
+  );
 }
