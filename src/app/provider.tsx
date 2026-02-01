@@ -1,5 +1,4 @@
 import { ThemeProvider } from "@/components/theme-provider";
-import { ConvexClientProvider } from "@/services/auth/components/convex-client";
 
 export default function Provider({
   children,
@@ -13,9 +12,7 @@ export default function Provider({
       enableSystem
       disableTransitionOnChange
     >
-      <ConvexClientProvider>
-        {children}
-      </ConvexClientProvider>
+      {children}
     </ThemeProvider>
   );
 }

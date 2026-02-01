@@ -1,8 +1,8 @@
 import { createAuthClient } from "better-auth/react";
-import { convexClient } from "@convex-dev/better-auth/client/plugins";
 
 export const authClient = createAuthClient({
-  plugins: [convexClient()],
+  baseURL: typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000',
+  // No plugins needed for mock data
 })
 
 export const {

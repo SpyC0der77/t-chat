@@ -10,8 +10,8 @@ import { Icon } from "@/components/icon"
 import { CollapsibleContent } from "@radix-ui/react-collapsible"
 import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible"
 import ThreadAction from "@/frontend/chat/components/thread-action"
-import { useQuery } from "convex/react"
-import { api } from "../../../../convex/_generated/api"
+import { useQuery } from "@/lib/mock-hooks"
+import { api } from "@/lib/mock-hooks"
 import { useEffect, useRef } from "react"
 import { useCustomAuth } from "../contexts/auth"
 import { useLocalStorage } from "usehooks-ts"
@@ -135,9 +135,9 @@ const THREAD_KEY = "threads";
 
 export default function Thread() {
   const { session } = useCustomAuth();
-  const threads = useQuery(api.thread.getThreadsByUser, {
-    userId: session ? session.id : 'skip'
-  });
+  const threads = useQuery(api.thread.getThreadsByUser, session ? {
+    userId: session.id
+  } : 'skip');
   const [savedThreads, setSavedThreads] = useLocalStorage<ThreadItem[]>(THREAD_KEY, []);
 
 

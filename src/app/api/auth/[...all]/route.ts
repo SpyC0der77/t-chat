@@ -1,3 +1,14 @@
-import { nextJsHandler } from "@convex-dev/better-auth/nextjs";
+// Mock auth handler - auth is handled client-side with mock data
+export async function GET() {
+  return new Response(JSON.stringify({ message: "Auth not available in mock mode" }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}
 
-export const { GET, POST } = nextJsHandler();
+export async function POST() {
+  return new Response(JSON.stringify({ message: "Auth not available in mock mode" }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+}

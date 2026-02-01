@@ -1,7 +1,7 @@
 import BgGradient from "@/components/bg-gradient";
 import { DotsLoader } from "@/components/ui/dot-loading";
 import { Navigate } from "react-router";
-import { useConvexAuth } from "convex/react";
+import { useConvexAuth } from "@/lib/mock-hooks";
 
 export default function Setting() {
   const { isAuthenticated, isLoading } = useConvexAuth();

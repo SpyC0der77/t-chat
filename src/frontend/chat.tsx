@@ -3,10 +3,10 @@ import { SettingNav, SettingNavSvg } from "@/components/setting-navigation"
 import { Button } from "@/components/ui/button";
 import ChatPrompt from "@/frontend/chat/components/chat-prompt"
 import { cn } from "@/lib/utils";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation } from "@/lib/mock-hooks";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { api } from "../../convex/_generated/api";
+import { api } from "@/lib/mock-hooks";
 import { useChat } from "@ai-sdk/react";
 import { useChatAI } from "./chat/contexts/model";
 

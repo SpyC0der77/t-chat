@@ -1,6 +1,6 @@
 import { Icon } from "@/components/icon"
-import { useMutation } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
+import { useMutation } from "@/lib/mock-hooks";
+import { api } from "@/lib/mock-hooks";
 import { useCustomAuth } from "../contexts/auth";
 
 export default function ThreadAction({ threadId, pinned }: { threadId: string; pinned: boolean }) {

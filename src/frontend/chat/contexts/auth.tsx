@@ -1,6 +1,5 @@
-import { useConvex, useConvexAuth } from "convex/react";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { api } from "../../../../convex/_generated/api";
+import { api, useConvex, useConvexAuth } from "@/lib/mock-hooks";
 
 type SessionData = {
   id: string
@@ -71,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     async function getUser() {
       try {
-        const user = (await convex.query(api.auth.getCurrentUser))!;
+        const user = api.auth.getCurrentUser();
         if (user) {
           const newSessionData: SessionData = {
             id: user.userId,
@@ -87,7 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
       catch (error) {
-        console.error("Error fetching user from Convex:", error);
+        console.error("Error fetching user:", error);
         setSession(null);
         setAuthCookie(null);
       }
@@ -101,7 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setAuthCookie(null);
     }
 
-  }, [isConvexAuth, isLoading, convex]);
+  }, [isConvexAuth, isLoading]);
   const logout = useCallback(() => { // Example logout function
     setSession(null);
     setAuthCookie(null);

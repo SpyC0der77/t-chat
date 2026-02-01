@@ -1,8 +1,7 @@
 import { google } from '@ai-sdk/google';
 import { openai } from '@ai-sdk/openai';
 import { generateText, smoothStream, streamText } from 'ai';
-import { fetchMutation } from "convex/nextjs";
-import { api } from '../../../../convex/_generated/api';
+import { api } from '@/lib/mock-hooks';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -33,7 +32,7 @@ async function generateTitle({
       prompt: `Write a title for the thread with the following messages: ${messages}`,
     });
     console.log("generateTitle", text);
-    await fetchMutation(api.thread.updatethread, {
+    api.thread.updatethread({
       threadId,
       userId,
       title: text,
@@ -50,7 +49,7 @@ export async function POST(req: Request) {
   try {
     const { messages, threadId, userId, model: modal } = await req.json();
 
-    const assistantMessageId = await fetchMutation(api.message.createMessage, {
+    const assistantMessageId = api.message.createMessage({
       threadId,
       userId,
       content: "",
@@ -86,7 +85,7 @@ export async function POST(req: Request) {
         if (chunk.type === 'text-delta') {
           accumulatedContent += chunk.textDelta;
           if (Date.now() - lastUpdate > 500) {
-            await fetchMutation(api.message.updateMessage, {
+            api.message.updateMessage({
               messageId: assistantMessageId!,
               content: accumulatedContent,
               status: "streaming",
@@ -96,7 +95,7 @@ export async function POST(req: Request) {
         }
       },
       onFinish: async ({ text }) => {
-        const updatedAt = await fetchMutation(api.message.updateMessage, {
+        const updatedAt = api.message.updateMessage({
           messageId: assistantMessageId!,
           content: accumulatedContent,
           status: "done",
