@@ -1,17 +1,13 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { useCustomAuth } from "@/frontend/chat/contexts/auth";
 import { signOut } from "@/services/auth/lib/auth-client";
 
 export default function SignOut() {
-  const { logout } = useCustomAuth();
-
   const handleSignOut = async () => {
     await signOut({
       fetchOptions: {
         onSuccess: () => {
-          logout();
           window.location.pathname = "/";
         },
       },
