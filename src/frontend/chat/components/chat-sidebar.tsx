@@ -3,12 +3,10 @@ import {
   SidebarContent,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { LogoWithNewChat } from "@/components/logo"
-import SearchThread from "@/frontend/chat/components/search-thread"
-import Thread from "@/frontend/chat/components/thread"
-
-
+} from "@/components/ui/sidebar";
+import { LogoWithNewChat } from "@/components/logo";
+import SearchThread from "@/frontend/chat/components/search-thread";
+import Thread from "@/frontend/chat/components/thread";
 
 export default function ChatSidebar() {
   return (
@@ -22,6 +20,5 @@ export default function ChatSidebar() {
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
-
